@@ -36,7 +36,7 @@ import mobappdev.example.nback_cimpl.data.UserPreferencesRepository
 
 interface GameViewModel {
     val gameState: StateFlow<GameState>
-    val score: StateFlow<Int>
+    val score: StateFlow<Int> //current score
     val highscore: StateFlow<Int>
     val nBack: Int
 
