@@ -9,6 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,13 +32,11 @@ import mobappdev.example.nback_cimpl.ui.viewmodels.GameVM
  *
  */
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             NBack_CImplTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -46,11 +46,27 @@ class MainActivity : ComponentActivity() {
                         factory = GameVM.Factory
                     )
 
-                    // Instantiate the homescreen
-                    HomeScreen(vm = gameViewModel)
+                    // Instantiate the NavHost and pass the viewmodel to the screens
+                    Navigation(navController = rememberNavController(), vm = gameViewModel)
                 }
             }
         }
     }
 }
 
+@Composable
+fun Navigation(navController: NavController, vm: GameVM) {
+    val navHostController = navController as NavHostController
+
+    NavHost(
+        navController = navHostController,
+        startDestination = "HomeScreen"
+    ) {
+        composable("HomeScreen") {
+            HomeScreen(navController = navController, vm = vm)
+        }
+        composable("GameScreen") {
+            GameScreen(navController = navController, vm = vm)
+        }
+    }
+}
