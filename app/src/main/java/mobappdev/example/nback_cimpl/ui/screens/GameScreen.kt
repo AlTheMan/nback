@@ -1,14 +1,17 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import mobappdev.example.nback_cimpl.R
-import mobappdev.example.nback_cimpl.ui.viewmodels.FakeVM
-import mobappdev.example.nback_cimpl.ui.viewmodels.GameType
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
 
 /**
@@ -59,6 +60,7 @@ fun GameScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) {
@@ -83,6 +85,10 @@ fun GameScreen(
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
+                    GenerateTiles(Modifier, gameState.eventValue)
+
+
                     if (gameState.eventValue != -1) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
@@ -91,15 +97,13 @@ fun GameScreen(
                         )
                     }
                     Button(onClick = vm::startGame) {
-                        Text(text = "Generate eventValues")
+                        Text(
+                            text = "Start",
+                            )
+
                     }
                 }
             }
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = "Start Game".uppercase(),
-                style = MaterialTheme.typography.displaySmall
-            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,7 +112,6 @@ fun GameScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    vm.setGameType(GameType.Audio);
                     // Todo: change this button behaviour
                     scope.launch {
                         snackBarHostState.showSnackbar(
@@ -126,7 +129,6 @@ fun GameScreen(
                 }
                 Button(
                     onClick = {
-                        vm.setGameType(GameType.Visual);
                         // Todo: change this button behaviour
                         scope.launch {
                             snackBarHostState.showSnackbar(
@@ -148,6 +150,39 @@ fun GameScreen(
     }
 }
 
+
+@Composable
+fun GenerateTiles(modifier: Modifier = Modifier, currentTile: Int) {
+    Column (){
+        var counter=0;
+        for (i in 1..3) {
+            Row() {
+                for (j in 1..3) {
+                    counter++;
+                    val boxColor = when {
+                        currentTile == counter  -> Color.Gray // Change this to the desired color
+                        else -> Color.LightGray
+                    }
+                    Box(
+                        modifier=modifier
+                            .background(boxColor)
+                            .padding(horizontal = 32.dp, vertical = 32.dp)
+                            //.aspectRatio(1F)
+                    ) {
+                        Text("Box");
+                    }
+                    Spacer(
+                        modifier = Modifier.width(16.dp)
+                    )
+                }
+            }
+            Spacer(
+                modifier = Modifier.height(16.dp)
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun GameScreenPreview() {
@@ -155,6 +190,5 @@ fun GameScreenPreview() {
     /*
     Surface(){
         HomeScreen(FakeVM(), navController)
-    }
-     */
+    } */
 }
