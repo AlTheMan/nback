@@ -40,15 +40,22 @@ interface GameViewModel {
     val gameState: StateFlow<GameState>
     val score: StateFlow<Int> //current score
     val highscore: StateFlow<Int> //highscore
-    val nBack: Int //n number
+    val nBack: StateFlow<Int> //n number
     val eventInterval: StateFlow<Long> //how long interval between each tile. in miliseconds
     val nrOfEventsPerRound: StateFlow<Int>
     val eventCounter:StateFlow<Int>
+    val gridSize:StateFlow<Int>
+    val nrOfSpokenLetters:StateFlow<Int>
+
     fun setGameType(gameType: GameType) //Audio, visual, audio-visual
     fun startGame()
     fun checkMatchVisual() //check if you scored a point (visual mode).
     fun checkMatchAudio() //check if you scored a point (Audio mode).
-
+    fun setNBack(newNback: Int) //set nBack value
+    fun setEventInterval(eventInterval: Long)
+    fun setNrOfEvents(nrOfevents: Int)
+    fun setGridSize(gridSize: Int)
+    fun setNrOfSpokenLetters(nrOfSpokenLetters: Int)
 }
 
 class GameVM(
@@ -66,8 +73,12 @@ class GameVM(
     override val highscore: StateFlow<Int>
         get() = _highscore
 
+    private val _nBack = MutableStateFlow(2)
+    override val nBack: StateFlow<Int>
+        get() = _nBack
+
     // nBack is currently hardcoded
-    override val nBack: Int = 2 //TODO: viewable object?
+    //override val nBack: Int = 2 //TODO: viewable object?
 
     private var job: Job? = null  // coroutine job for the game event
     //private val eventInterval: Long = 2000L
@@ -80,6 +91,14 @@ class GameVM(
     private val _nrOfEventsPerRound = MutableStateFlow(10) //"size"
     override val nrOfEventsPerRound: StateFlow<Int>
         get() = _nrOfEventsPerRound
+
+    private val _gridSize = MutableStateFlow(3) //"size"
+    override val gridSize: StateFlow<Int>
+        get() = _gridSize
+
+    private val _nrOfSpokenLetters = MutableStateFlow(9) //"size"
+    override val nrOfSpokenLetters: StateFlow<Int>
+        get() = _nrOfSpokenLetters
 
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var eventsVisual = emptyArray<Int>()  // Array with all events
@@ -108,8 +127,8 @@ class GameVM(
         resetGameState()
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
-        eventsVisual = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
-        eventsAudio = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
+        eventsVisual = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, gridSize.value*gridSize.value, 30, nBack.value).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
+        eventsAudio = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, nrOfSpokenLetters.value, 30, nBack.value).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
 
         Log.d("GameVM", "The following (Visual) sequence was generated: ${eventsVisual.contentToString()}")
         Log.d("GameVM", "The following (Audio) sequence was generated: ${eventsAudio.contentToString()}")
@@ -117,8 +136,8 @@ class GameVM(
 
         val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
         val myArray2 = arrayOf(1, 2, 1, 2, 1, 2, 1, 2, 1, 9)
-        eventsVisual = myArray2
-        eventsAudio=myArray2
+        //eventsVisual = myArray2
+        //eventsAudio=myArray2
         //Log.d("GameVM, startGame, eventSize: ", events.size.toString())
         job = viewModelScope.launch {
             when (gameState.value.gameType) {
@@ -151,10 +170,10 @@ class GameVM(
 
 
     override fun checkMatchAudio() {
-        if (eventCounter.value >= nBack && eventCounterCheckerAudio != eventCounter.value && !_gameState.value.gameType.equals(GameType.Visual)) {
+        if (eventCounter.value >= nBack.value && eventCounterCheckerAudio != eventCounter.value && !_gameState.value.gameType.equals(GameType.Visual)) {
             eventCounterCheckerAudio = eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
             var currentEvent = _gameState.value.eventValueAudio
-            var nStepBack = eventsAudio.get(eventCounter.value - nBack)
+            var nStepBack = eventsAudio.get(eventCounter.value - nBack.value)
             if (currentEvent == nStepBack) {
                 increaseScore()
             } else {
@@ -167,15 +186,51 @@ class GameVM(
         }
     }
 
+    override fun setNBack(newNback: Int) {
+        if(newNback>0 && newNback<=50){
+            _nBack.value=newNback
+            if(newNback>nrOfEventsPerRound.value){
+                _nrOfEventsPerRound.value=newNback
+            }
+        }
+    }
+
+    override fun setEventInterval(eventInterval: Long) {
+        if(eventInterval>0){
+            _eventInterval.value=eventInterval
+        }
+    }
+
+    override fun setNrOfEvents(nrOfevents: Int) {
+        if(nrOfevents>0){
+            _nrOfEventsPerRound.value=nrOfevents
+            if(nrOfevents<nBack.value){
+                _nBack.value=nrOfevents
+            }
+        }
+    }
+
+    override fun setGridSize(gridSizeNew: Int) {
+        if(gridSizeNew>0){
+            _gridSize.value=gridSizeNew
+        }
+    }
+
+    override fun setNrOfSpokenLetters(nrOfSpokenLettersNew: Int) {
+        if(nrOfSpokenLettersNew>0){
+            _nrOfSpokenLetters.value=nrOfSpokenLettersNew
+        }
+    }
+
 
     /**
      * This function should check if there is a match when the user presses a match button
      */
     override fun checkMatchVisual() {
-        if(eventCounter.value>=nBack && eventCounterCheckerVisual!=eventCounter.value && !_gameState.value.gameType.equals(GameType.Audio)){
+        if(eventCounter.value>=nBack.value && eventCounterCheckerVisual!=eventCounter.value && !_gameState.value.gameType.equals(GameType.Audio)){
             eventCounterCheckerVisual=eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
             var currentEvent = _gameState.value.eventValueVisual
-            var nStepBack= eventsVisual.get(eventCounter.value-nBack)
+            var nStepBack= eventsVisual.get(eventCounter.value-nBack.value)
             if(currentEvent==nStepBack){
                 increaseScore()
             }else{
@@ -240,6 +295,8 @@ class GameVM(
         // Todo: Make work for Higher grade
     }
 
+
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -266,6 +323,7 @@ enum class GameType{
     AudioVisual
 }
 
+
 data class GameState(
     // You can use this state to push values from the VM to your UI.
     val gameType: GameType =  GameType.Visual ,  // Type of the game
@@ -278,7 +336,7 @@ data class GameState(
 
 
 
-
+/*
 class FakeVM: GameViewModel{
     override val gameState: StateFlow<GameState>
         get() = MutableStateFlow(GameState()).asStateFlow()
@@ -293,8 +351,8 @@ class FakeVM: GameViewModel{
 
     override val eventInterval: StateFlow<Long>
         get() = MutableStateFlow(42L).asStateFlow()
-    override val nBack: Int
-        get() = 2
+    override val nBack: StateFlow<Int>
+        get() = TODO("Not yet implemented")
 
     override fun setGameType(gameType: GameType) {
     }
@@ -308,4 +366,4 @@ class FakeVM: GameViewModel{
     override fun checkMatchAudio() {
         TODO("Not yet implemented")
     }
-}
+} */
