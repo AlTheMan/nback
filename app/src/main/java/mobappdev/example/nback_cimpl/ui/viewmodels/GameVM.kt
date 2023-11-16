@@ -118,6 +118,7 @@ class GameVM(
         val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
         val myArray2 = arrayOf(1, 2, 1, 2, 1, 2, 1, 2, 1, 9)
         eventsVisual = myArray2
+        eventsAudio=myArray2
         //Log.d("GameVM, startGame, eventSize: ", events.size.toString())
         job = viewModelScope.launch {
             when (gameState.value.gameType) {
@@ -160,6 +161,9 @@ class GameVM(
                 decreaseScore()
                 _gameState.value = _gameState.value.copy(correctAudioPress = false)
             }
+        }
+        else{
+            _gameState.value = _gameState.value.copy(correctAudioPress = false)
         }
     }
 

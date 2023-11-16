@@ -1,9 +1,7 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,12 +30,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -75,7 +70,9 @@ fun GameScreen(
     val eventCounter by vm.eventCounter.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    var isShaking by remember { mutableStateOf(false) }
+    var isShakingVisual by remember { mutableStateOf(false) }
+    var isShakingAudio by remember { mutableStateOf(false) }
+
 
     //anvönds för att skaka knappar
     /*
@@ -88,11 +85,20 @@ fun GameScreen(
 
     LaunchedEffect(gameState.correctVisualPress){
         if(!gameState.correctVisualPress){
-            isShaking = true
+            isShakingVisual = true
             delay(400) // Adjust the duration as needed (in milliseconds)
-            isShaking = false
+            isShakingVisual = false
         }else{
-            isShaking = false
+            isShakingVisual = false
+        }
+    }
+    LaunchedEffect(gameState.correctAudioPress){
+        if(!gameState.correctAudioPress){
+            isShakingAudio = true
+            delay(400) // Adjust the duration as needed (in milliseconds)
+            isShakingAudio = false
+        }else{
+            isShakingAudio = false
         }
     }
 
@@ -156,7 +162,12 @@ fun GameScreen(
             ) {
                 Button(onClick = { //Audio-button
                     vm.checkMatchAudio()
-                }) {
+                },
+                    modifier = Modifier
+                        .graphicsLayer(
+                            rotationZ = if (isShakingAudio) 30f else 0f, //roterar 30 grader, ananrs 0 grader. f står för float tror jag.
+                        )
+                    ) {
                     Icon(
                         painter = painterResource(id = R.drawable.sound_on),
                         contentDescription = "Sound",
@@ -171,7 +182,7 @@ fun GameScreen(
                     },
                     modifier = Modifier
                         .graphicsLayer(
-                            rotationZ = if (isShaking) 30f else 0f, //roterar 30 grader, ananrs 0 grader. f står för float tror jag.
+                            rotationZ = if (isShakingVisual) 30f else 0f, //roterar 30 grader, ananrs 0 grader. f står för float tror jag.
                         )
                     ) {
                     Icon(
