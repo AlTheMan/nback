@@ -151,7 +151,7 @@ class GameVM(
 
 
     override fun checkMatchAudio() {
-        if (eventCounter.value >= nBack && eventCounterCheckerAudio != eventCounter.value) {
+        if (eventCounter.value >= nBack && eventCounterCheckerAudio != eventCounter.value && !_gameState.value.gameType.equals(GameType.Visual)) {
             eventCounterCheckerAudio = eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
             var currentEvent = _gameState.value.eventValueAudio
             var nStepBack = eventsAudio.get(eventCounter.value - nBack)
@@ -172,7 +172,7 @@ class GameVM(
      * This function should check if there is a match when the user presses a match button
      */
     override fun checkMatchVisual() {
-        if(eventCounter.value>=nBack && eventCounterCheckerVisual!=eventCounter.value){
+        if(eventCounter.value>=nBack && eventCounterCheckerVisual!=eventCounter.value && !_gameState.value.gameType.equals(GameType.Audio)){
             eventCounterCheckerVisual=eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
             var currentEvent = _gameState.value.eventValueVisual
             var nStepBack= eventsVisual.get(eventCounter.value-nBack)

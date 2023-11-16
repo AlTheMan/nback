@@ -74,13 +74,14 @@ class MainActivity : ComponentActivity() {
     }
 
     //behövs denna?
+    /*
     override fun onDestroy() {
         if (::textToSpeech.isInitialized) {
             textToSpeech.stop()
             textToSpeech.shutdown()
         }
         super.onDestroy()
-    }
+    } */
 
 }
 
