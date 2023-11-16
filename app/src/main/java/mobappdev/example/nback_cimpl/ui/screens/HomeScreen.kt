@@ -133,6 +133,7 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
+                    speakHome(textToSpeech,"Audio selected")
                     vm.setGameType(GameType.Audio);
                     // Todo: change this button behaviour
                     scope.launch {
@@ -152,7 +153,6 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         vm.setGameType(GameType.Visual);
-                        speakHome(textToSpeech,"hello")
                         // Todo: change this button behaviour
                         scope.launch {
                             snackBarHostState.showSnackbar(

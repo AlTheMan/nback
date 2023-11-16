@@ -22,6 +22,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -63,12 +64,20 @@ fun GameScreen(
     val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val gameState by vm.gameState.collectAsState()
     val score by vm.score.collectAsState()
+    val eventCounter by vm.eventCounter.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-
-
     Log.d("GameScreen", "Recomposed: score=$score")
+
+    // Observe the eventCounter using LaunchedEffect
+    LaunchedEffect(eventCounter) {
+        println("test")
+        // This block will be executed whenever vm.eventCounter changes
+        val eventValue = gameState.eventValue
+        // Call the speak function with the updated eventCounter
+        speak(textToSpeech, "$eventValue")
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) }
@@ -124,7 +133,7 @@ fun GameScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    vm.checkMatch()
+                    vm.checkMatchVisual()
                     // Todo: change this button behaviour
 
                 }) {
@@ -138,8 +147,7 @@ fun GameScreen(
                 }
                 Button(
                     onClick = {
-                        vm.checkMatch();
-                        speak(textToSpeech,"test");
+                        vm.checkMatchVisual();
                         // Todo: change this button behaviour
                     }) {
                     Icon(
@@ -169,7 +177,7 @@ fun GenerateTiles(modifier: Modifier = Modifier, currentTile: Int) {
                         else -> Color.LightGray
                     }
                     Box(
-                        modifier=modifier
+                        modifier= modifier
                             .background(boxColor)
                             .padding(horizontal = 32.dp, vertical = 32.dp)
                             //.aspectRatio(1F)
