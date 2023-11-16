@@ -1,6 +1,8 @@
 package mobappdev.example.nback_cimpl
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +35,7 @@ import mobappdev.example.nback_cimpl.ui.viewmodels.GameVM
  */
 
 class MainActivity : ComponentActivity() {
+    private lateinit var textToSpeech: TextToSpeech
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -45,28 +48,56 @@ class MainActivity : ComponentActivity() {
                     val gameViewModel: GameVM = viewModel(
                         factory = GameVM.Factory
                     )
+                    //textToSpeech = TextToSpeech(this@MainActivity,  TextToSpeech.OnInitListener {  }, "com.google.android.tts")
+
+
+                    textToSpeech = TextToSpeech(this@MainActivity) { status ->
+                        if (status == TextToSpeech.SUCCESS) {
+                            Log.d("MainActivity", "successfully initialize TextToSpeech")
+                            // Initialization successful
+                            // You can use textToSpeech instance here
+                        } else {
+                            Log.d("MainActivity", "failure to initialize TextToSpeech")
+                            // Handle initialization failure
+                        }
+                    }
+
+                    //textToSpeech = TextToSpeech(this@MainActivity, this@MainActivity)
+
+                    //textToSpeech = TextToSpeech(this, this)
 
                     // Instantiate the NavHost and pass the viewmodel to the screens
-                    Navigation(navController = rememberNavController(), vm = gameViewModel)
+                    Navigation(navController = rememberNavController(), vm = gameViewModel, textToSpeech = textToSpeech)
                 }
             }
         }
     }
+
+    //behövs denna?
+    override fun onDestroy() {
+        if (::textToSpeech.isInitialized) {
+            textToSpeech.stop()
+            textToSpeech.shutdown()
+        }
+        super.onDestroy()
+    }
+
 }
 
-@Composable
-fun Navigation(navController: NavController, vm: GameVM) {
-    val navHostController = navController as NavHostController
 
+@Composable
+fun Navigation(navController: NavController, vm: GameVM, textToSpeech: TextToSpeech) {
+
+    val navHostController = navController as NavHostController
     NavHost(
         navController = navHostController,
         startDestination = "HomeScreen"
     ) {
         composable("HomeScreen") {
-            HomeScreen(navController = navController, vm = vm)
+            HomeScreen(navController = navController, vm = vm,textToSpeech = textToSpeech)
         }
         composable("GameScreen") {
-            GameScreen(navController = navController, vm = vm)
+            GameScreen(navController = navController, vm = vm, textToSpeech = textToSpeech)
         }
     }
 }

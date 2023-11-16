@@ -1,5 +1,6 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
+import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,10 +48,16 @@ import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
  *
  */
 
+fun speakHome(  textToSpeech: TextToSpeech, text: String) {
+    // Use the TextToSpeech instance to speak the provided text
+    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+}
+
 @Composable
 fun HomeScreen(
     vm: GameViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    textToSpeech: TextToSpeech
 ) {
     val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val gameState by vm.gameState.collectAsState()
@@ -145,6 +152,7 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         vm.setGameType(GameType.Visual);
+                        speakHome(textToSpeech,"hello")
                         // Todo: change this button behaviour
                         scope.launch {
                             snackBarHostState.showSnackbar(

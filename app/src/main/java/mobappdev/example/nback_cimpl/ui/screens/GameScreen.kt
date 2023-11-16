@@ -1,5 +1,6 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +18,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -34,7 +34,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.launch
 import mobappdev.example.nback_cimpl.R
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
 
@@ -51,16 +50,23 @@ import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
  *
  */
 
+fun speak(  textToSpeech: TextToSpeech, text: String) {
+    // Use the TextToSpeech instance to speak the provided text
+    textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+}
 @Composable
 fun GameScreen(
     vm: GameViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    textToSpeech: TextToSpeech
 ) {
     val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val gameState by vm.gameState.collectAsState()
     val score by vm.score.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+
 
     Log.d("GameScreen", "Recomposed: score=$score")
 
@@ -132,7 +138,8 @@ fun GameScreen(
                 }
                 Button(
                     onClick = {
-                        vm.checkMatch()
+                        vm.checkMatch();
+                        speak(textToSpeech,"test");
                         // Todo: change this button behaviour
                     }) {
                     Icon(
@@ -180,6 +187,8 @@ fun GenerateTiles(modifier: Modifier = Modifier, currentTile: Int) {
         }
     }
 }
+
+
 
 @Preview
 @Composable

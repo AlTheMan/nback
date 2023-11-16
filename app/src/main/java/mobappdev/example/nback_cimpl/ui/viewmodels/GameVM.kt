@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 import mobappdev.example.nback_cimpl.GameApplication
 import mobappdev.example.nback_cimpl.NBackHelper
 import mobappdev.example.nback_cimpl.data.UserPreferencesRepository
+import android.speech.tts.TextToSpeech
+
 
 /**
  * This is the GameViewModel.
@@ -191,6 +193,9 @@ data class GameState(
     val gameType: GameType =  GameType.Visual ,  // Type of the game
     val eventValue: Int = -1  // The value of the array string
 )
+
+
+
 
 class FakeVM: GameViewModel{
     override val gameState: StateFlow<GameState>
