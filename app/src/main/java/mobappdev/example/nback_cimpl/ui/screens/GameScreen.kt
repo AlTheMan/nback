@@ -78,13 +78,23 @@ fun GameScreen(
     var isShaking by remember { mutableStateOf(false) }
 
     //anvönds för att skaka knappar
+    /*
     LaunchedEffect(isShaking) {
         if (isShaking) {
-            delay(1000) // Adjust the duration as needed (in milliseconds)
+            delay(400) // Adjust the duration as needed (in milliseconds)
+            isShaking = false
+        }
+    } */
+
+    LaunchedEffect(gameState.correctVisualPress){
+        if(!gameState.correctVisualPress){
+            isShaking = true
+            delay(400) // Adjust the duration as needed (in milliseconds)
+            isShaking = false
+        }else{
             isShaking = false
         }
     }
-
 
     // Observe the eventCounter using LaunchedEffect
     LaunchedEffect(eventCounter) {
@@ -158,7 +168,6 @@ fun GameScreen(
                 Button( //Visual-buton
                     onClick = {
                         vm.checkMatchVisual();
-                        isShaking = true
                     },
                     modifier = Modifier
                         .graphicsLayer(

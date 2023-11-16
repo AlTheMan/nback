@@ -105,6 +105,7 @@ class GameVM(
         eventCounterCheckerVisual=0
         eventCounterCheckerAudio=0
         resetScore()
+        resetGameState()
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
         eventsVisual = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
@@ -176,7 +177,10 @@ class GameVM(
             }else{
                 decreaseScore()
                 _gameState.value = _gameState.value.copy(correctVisualPress = false)
+                Log.d("GameVM", "correctVisualPress: " + _gameState.value.correctVisualPress.toString())
             }
+        }else{
+            _gameState.value = _gameState.value.copy(correctVisualPress = false)
         }
     }
 
@@ -192,7 +196,7 @@ class GameVM(
 
         // Calculate the initial remaining tiles
         _gameState.value = _gameState.value.copy(nrOfTilesLeft = _nrOfEventsPerRound.value)
-        resetGameState()
+
 
         for (value in events) {
             _gameState.value = _gameState.value.copy(eventValueAudio = value)
@@ -210,7 +214,6 @@ class GameVM(
     }
 
     private suspend fun runVisualGame(events: Array<Int>){
-        resetGameState()
         // Calculate the initial remaining tiles
         _gameState.value = _gameState.value.copy(nrOfTilesLeft = _nrOfEventsPerRound.value)
 
