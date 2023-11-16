@@ -115,14 +115,22 @@ fun HomeScreen(
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Button(onClick = {
+                    NScreen()
+                    NrOfEventsScreen()
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp),
+                        onClick = {
                         //vm.startGame()
                         navController.navigate("GameScreen")
                     }) {
                         Text(text = "Start game")
                     }
 
-                    SomeScreen()
                 }
             }
             Row(
@@ -163,6 +171,7 @@ fun HomeScreen(
 
 @Composable
 fun CustomDropdownMenu(
+    title: String,
     items: List<String>,
     onItemSelected: (String) -> Unit
 ) {
@@ -171,7 +180,7 @@ fun CustomDropdownMenu(
 
     Column {
         Button(onClick = { expanded = true }) {
-            Text(text = items[selectedIndex])
+            Text(text = title+": " + items[selectedIndex])
         }
 
         DropdownMenu(
@@ -192,11 +201,28 @@ fun CustomDropdownMenu(
 }
 
 @Composable
+fun NrOfEventsScreen() {
+    val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
+    val selectedItem = remember { mutableStateOf(items.first()) }
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem.value = it }, title="Nr of events")
+    //Text("Selected NrOfEvents is: ${selectedItem.value}")
+}
+
+@Composable
+fun NScreen() {
+    val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
+    val selectedItem = remember { mutableStateOf(items.first()) }
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem.value = it }, title="N")
+
+    //Text("Selected N is: ${selectedItem.value}")
+}
+
+@Composable
 fun SomeScreen() {
     val items = listOf("Item 1", "Item 2", "Item 3") // The list of items for the dropdown
     val selectedItem = remember { mutableStateOf(items.first()) }
 
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem.value = it })
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem.value = it }, title="test")
     Text("Selected item is: ${selectedItem.value}")
 }
 
