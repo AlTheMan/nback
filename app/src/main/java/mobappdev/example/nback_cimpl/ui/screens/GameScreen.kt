@@ -1,5 +1,6 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,9 +58,11 @@ fun GameScreen(
 ) {
     val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val gameState by vm.gameState.collectAsState()
+    val score by vm.score.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+    Log.d("GameScreen", "Recomposed: score=$score")
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) }
@@ -73,7 +76,8 @@ fun GameScreen(
         ) {
             Text(
                 modifier = Modifier.padding(32.dp),
-                text = "High-Score = $highscore",
+                text="score: $score",
+                //text = "High-Score = $highscore",
                 style = MaterialTheme.typography.headlineLarge
             )
             // Todo: You'll probably want to change this "BOX" part of the composable
@@ -96,7 +100,9 @@ fun GameScreen(
                             textAlign = TextAlign.Center
                         )
                     }
-                    Button(onClick = vm::startGame) {
+                    Button(onClick = {
+                        vm.startGame()
+                    }) {
                         Text(
                             text = "Start",
                             )
@@ -112,12 +118,9 @@ fun GameScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
+                    vm.checkMatch()
                     // Todo: change this button behaviour
-                    scope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = "Hey! you clicked the audio button"
-                        )
-                    }
+
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.sound_on),
@@ -129,13 +132,8 @@ fun GameScreen(
                 }
                 Button(
                     onClick = {
+                        vm.checkMatch()
                         // Todo: change this button behaviour
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Hey! you clicked the visual button",
-                                duration = SnackbarDuration.Short
-                            )
-                        }
                     }) {
                     Icon(
                         painter = painterResource(id = R.drawable.visual),

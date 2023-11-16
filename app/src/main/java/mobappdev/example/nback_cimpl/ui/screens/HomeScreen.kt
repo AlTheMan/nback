@@ -89,18 +89,13 @@ fun HomeScreen(
                         )
                     }
                     Button(onClick = {
-                        vm::startGame;
+                        //vm.startGame()
                         navController.navigate("GameScreen")
                     }) {
-                        Text(text = "Generate eventValues")
+                        Text(text = "Start game")
                     }
                 }
             }
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = "Start Game".uppercase(),
-                style = MaterialTheme.typography.displaySmall
-            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

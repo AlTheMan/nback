@@ -37,8 +37,8 @@ import mobappdev.example.nback_cimpl.data.UserPreferencesRepository
 interface GameViewModel {
     val gameState: StateFlow<GameState>
     val score: StateFlow<Int> //current score
-    val highscore: StateFlow<Int>
-    val nBack: Int
+    val highscore: StateFlow<Int> //highscore
+    val nBack: Int //n number
 
     fun setGameType(gameType: GameType)
     fun startGame()
@@ -69,6 +69,7 @@ class GameVM(
 
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var events = emptyArray<Int>()  // Array with all events
+    private var eventCounter: Int=0; //counts how many times an event has occured. how many times a switch between numbers.
 
     override fun setGameType(gameType: GameType) {
         // update the gametype in the gamestate
@@ -77,11 +78,15 @@ class GameVM(
 
     override fun startGame() {
         job?.cancel()  // Cancel any existing game loop
+        eventCounter=0
+        resetScore()
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
         events = nBackHelper.generateNBackString(10, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
         Log.d("GameVM", "The following sequence was generated: ${events.contentToString()}")
-
+        val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
+        events = myArray
+        Log.d("GameVM, startGame, eventSize: ", events.size.toString())
         job = viewModelScope.launch {
             when (gameState.value.gameType) {
                 GameType.Audio -> runAudioGame()
@@ -92,7 +97,35 @@ class GameVM(
         }
     }
 
+    private fun resetScore(){
+        _score.value=0
+    }
+
+    private fun increaseScore(){
+        _score.value++
+    }
+
+    private fun decreaseScore(){
+        if(_score.value>0){
+            _score.value--
+        }
+    }
+
     override fun checkMatch() {
+        //TODO: add boolean to check if user has already checked match before for this event. and reset it between each delay
+        
+        var eventsIndex=eventCounter-nBack
+        if(eventsIndex>=0){
+            var currentEvent = _gameState.value.eventValue
+            var nStepBack= events.get(eventsIndex)
+            if(currentEvent==nStepBack){
+                increaseScore()
+            }else{
+                decreaseScore()
+            }
+        }
+
+
         /**
          * Todo: This function should check if there is a match when the user presses a match button
          * Make sure the user can only register a match once for each event.
@@ -107,6 +140,7 @@ class GameVM(
         for (value in events) {
             _gameState.value = _gameState.value.copy(eventValue = value)
             delay(eventInterval)
+            eventCounter++
         }
 
     }
