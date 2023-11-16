@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import mobappdev.example.nback_cimpl.GameApplication
 import mobappdev.example.nback_cimpl.NBackHelper
@@ -45,7 +46,6 @@ interface GameViewModel {
     val eventCounter:StateFlow<Int>
     fun setGameType(gameType: GameType) //Audio, visual, audio-visual
     fun startGame()
-
     fun checkMatchVisual() //check if you scored a point (visual mode).
     fun checkMatchAudio() //check if you scored a point (Audio mode).
 
@@ -115,7 +115,8 @@ class GameVM(
 
 
         val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
-        eventsAudio = myArray
+        val myArray2 = arrayOf(1, 2, 1, 2, 1, 2, 1, 2, 1, 9)
+        eventsVisual = myArray2
         //Log.d("GameVM, startGame, eventSize: ", events.size.toString())
         job = viewModelScope.launch {
             when (gameState.value.gameType) {
@@ -123,7 +124,12 @@ class GameVM(
                 GameType.AudioVisual -> runAudioVisualGame()
                 GameType.Visual -> runVisualGame(eventsVisual)
             }
-            // Todo: update the highscore
+
+            // updates the highscore
+            if(_score.value>userPreferencesRepository.highscore.first()){
+                userPreferencesRepository.saveHighScore(_score.value)
+                _highscore.value=_score.value
+            }
         }
     }
 
@@ -140,6 +146,7 @@ class GameVM(
             _score.value--
         }
     }
+
 
     override fun checkMatchAudio() {
 
@@ -175,20 +182,26 @@ class GameVM(
          */
     }
     private suspend fun runAudioGame(events: Array<Int>) {
-        // Todo: Make work for Basic grade
         for (value in events) {
             _gameState.value = _gameState.value.copy(eventValueAudio = value)
             delay(_eventInterval.value)
             _eventCounter.value++
+
+            // Calculate the remaining tiles
+            val tilesLeft = _nrOfEventsPerRound.value - _eventCounter.value
+            _gameState.value = _gameState.value.copy(nrOfTilesLeft = tilesLeft)
         }
     }
 
     private suspend fun runVisualGame(events: Array<Int>){
-        // Todo: Replace this code for actual game code
         for (value in events) {
             _gameState.value = _gameState.value.copy(eventValueVisual = value)
             delay(_eventInterval.value)
             _eventCounter.value++
+
+            // Calculate the remaining tiles
+            val tilesLeft = _nrOfEventsPerRound.value - _eventCounter.value
+            _gameState.value = _gameState.value.copy(nrOfTilesLeft = tilesLeft)
         }
     }
 
@@ -226,8 +239,8 @@ data class GameState(
     // You can use this state to push values from the VM to your UI.
     val gameType: GameType =  GameType.Visual ,  // Type of the game
     val eventValueAudio: Int = -1,  // The value of the array string
-    val eventValueVisual: Int = -1  // The value of the array string
-
+    val eventValueVisual: Int = -1,  // The value of the array string
+    val nrOfTilesLeft: Int=0
 )
 
 

@@ -95,9 +95,10 @@ fun GameScreen(
         ) {
             Text(
                 modifier = Modifier.padding(32.dp),
-                text="score: $score",
-                //text = "High-Score = $highscore",
-                style = MaterialTheme.typography.headlineLarge
+                text="score: $score\n" +
+                        "nrOfTilesLeft: ${gameState.nrOfTilesLeft}\n" +
+                        "Current eventValue: ${gameState.eventValueVisual}, ${(gameState.eventValueAudio + 'a'.code).toChar()}",
+                style = MaterialTheme.typography.headlineMedium
             )
             // Todo: You'll probably want to change this "BOX" part of the composable
             Box(
@@ -110,13 +111,7 @@ fun GameScreen(
                 ) {
 
                     GenerateTiles(Modifier, gameState.eventValueVisual)
-                    if (gameState.eventValueVisual != -1 || gameState.eventValueAudio != -1) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                        text = "Current eventValue: ${gameState.eventValueVisual}, ${(gameState.eventValueAudio + 'a'.code).toChar()}",
-                            textAlign = TextAlign.Center
-                        )
-                    }
+
                     Button(onClick = {
                         vm.startGame()
                     }) {
