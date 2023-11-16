@@ -78,27 +78,11 @@ fun HomeScreen(
         ) {
             Text(
                 modifier = Modifier.padding(8.dp),
-                text = "High-Score = $highscore",
-                style = MaterialTheme.typography.headlineLarge
-            )
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = "N = ${vm.nBack}",
-                style = MaterialTheme.typography.headlineLarge
-            )
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = "delay = $eventInterval ms",
-                style = MaterialTheme.typography.headlineLarge
-            )
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = "gameType = ${gameState.gameType}",
-                style = MaterialTheme.typography.headlineLarge
-            )
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = "nrOfEventsPerRound = $nrOfEventsPerRound",
+                text = "High-Score = $highscore\n"+
+                        "N = ${vm.nBack}\n"+
+                        "delay = $eventInterval ms\n"+
+                        "gameType = ${gameState.gameType}\n"+
+                        "nrOfEventsPerRound = $nrOfEventsPerRound",
                 style = MaterialTheme.typography.headlineLarge
             )
             // Todo: You'll probably want to change this "BOX" part of the composable

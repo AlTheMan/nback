@@ -181,7 +181,18 @@ class GameVM(
          * Make sure the user can only register a match once for each event.
          */
     }
+
+    private fun resetGameState(){
+        _gameState.value = _gameState.value.copy(eventValueAudio = -1)
+        _gameState.value = _gameState.value.copy(eventValueVisual = -1)
+    }
+
     private suspend fun runAudioGame(events: Array<Int>) {
+
+        // Calculate the initial remaining tiles
+        _gameState.value = _gameState.value.copy(nrOfTilesLeft = _nrOfEventsPerRound.value)
+        resetGameState()
+
         for (value in events) {
             _gameState.value = _gameState.value.copy(eventValueAudio = value)
             delay(_eventInterval.value)
@@ -194,6 +205,10 @@ class GameVM(
     }
 
     private suspend fun runVisualGame(events: Array<Int>){
+        resetGameState()
+        // Calculate the initial remaining tiles
+        _gameState.value = _gameState.value.copy(nrOfTilesLeft = _nrOfEventsPerRound.value)
+
         for (value in events) {
             _gameState.value = _gameState.value.copy(eventValueVisual = value)
             delay(_eventInterval.value)
