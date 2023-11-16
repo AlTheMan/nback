@@ -149,7 +149,6 @@ class GameVM(
 
 
     override fun checkMatchAudio() {
-
         if (eventCounter.value >= nBack && eventCounterCheckerAudio != eventCounter.value) {
             eventCounterCheckerAudio = eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
             var currentEvent = _gameState.value.eventValueAudio
@@ -158,12 +157,16 @@ class GameVM(
                 increaseScore()
             } else {
                 decreaseScore()
+                _gameState.value = _gameState.value.copy(correctAudioPress = false)
             }
         }
     }
 
-    override fun checkMatchVisual() {
 
+    /**
+     * This function should check if there is a match when the user presses a match button
+     */
+    override fun checkMatchVisual() {
         if(eventCounter.value>=nBack && eventCounterCheckerVisual!=eventCounter.value){
             eventCounterCheckerVisual=eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
             var currentEvent = _gameState.value.eventValueVisual
@@ -172,19 +175,17 @@ class GameVM(
                 increaseScore()
             }else{
                 decreaseScore()
+                _gameState.value = _gameState.value.copy(correctVisualPress = false)
             }
         }
-
-
-        /**
-         * Todo: This function should check if there is a match when the user presses a match button
-         * Make sure the user can only register a match once for each event.
-         */
     }
 
     private fun resetGameState(){
         _gameState.value = _gameState.value.copy(eventValueAudio = -1)
         _gameState.value = _gameState.value.copy(eventValueVisual = -1)
+        _gameState.value = _gameState.value.copy(correctAudioPress = true)
+        _gameState.value = _gameState.value.copy(correctVisualPress = true)
+
     }
 
     private suspend fun runAudioGame(events: Array<Int>) {
@@ -201,6 +202,10 @@ class GameVM(
             // Calculate the remaining tiles
             val tilesLeft = _nrOfEventsPerRound.value - _eventCounter.value
             _gameState.value = _gameState.value.copy(nrOfTilesLeft = tilesLeft)
+
+            //reset correctAudioPress
+            _gameState.value = _gameState.value.copy(correctAudioPress = true)
+
         }
     }
 
@@ -217,6 +222,10 @@ class GameVM(
             // Calculate the remaining tiles
             val tilesLeft = _nrOfEventsPerRound.value - _eventCounter.value
             _gameState.value = _gameState.value.copy(nrOfTilesLeft = tilesLeft)
+
+            //reset correctVisualPress
+            _gameState.value = _gameState.value.copy(correctVisualPress = true)
+
         }
     }
 
@@ -255,7 +264,9 @@ data class GameState(
     val gameType: GameType =  GameType.Visual ,  // Type of the game
     val eventValueAudio: Int = -1,  // The value of the array string
     val eventValueVisual: Int = -1,  // The value of the array string
-    val nrOfTilesLeft: Int=0
+    val nrOfTilesLeft: Int=0,
+    val correctAudioPress: Boolean=true, //if user has pressed the audio button correctly and gained a score. Is used to shake UI-buttons when pressing at the wrong time.
+    val correctVisualPress: Boolean=true,
 )
 
 

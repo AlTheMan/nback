@@ -112,12 +112,6 @@ fun HomeScreen(
                 Button(onClick = {
                     speakHome(textToSpeech,"Audio selected")
                     vm.setGameType(GameType.Audio);
-                    // Todo: change this button behaviour
-                    scope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = "Hey! you clicked the audio button"
-                        )
-                    }
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.sound_on),
@@ -130,13 +124,6 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         vm.setGameType(GameType.Visual);
-                        // Todo: change this button behaviour
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Hey! you clicked the visual button",
-                                duration = SnackbarDuration.Short
-                            )
-                        }
                     }) {
                     Icon(
                         painter = painterResource(id = R.drawable.visual),
