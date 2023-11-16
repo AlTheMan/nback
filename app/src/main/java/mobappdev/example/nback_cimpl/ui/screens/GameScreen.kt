@@ -113,7 +113,7 @@ fun GameScreen(
                     if (gameState.eventValueVisual != -1 || gameState.eventValueAudio != -1) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "Current eventValueVisual/audio is: ${gameState.eventValueVisual}, ${gameState.eventValueAudio}",
+                        text = "Current eventValue: ${gameState.eventValueVisual}, ${(gameState.eventValueAudio + 'a'.code).toChar()}",
                             textAlign = TextAlign.Center
                         )
                     }
