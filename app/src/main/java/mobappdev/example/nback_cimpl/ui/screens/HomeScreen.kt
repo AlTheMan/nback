@@ -1,16 +1,31 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
 import android.speech.tts.TextToSpeech
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -18,13 +33,17 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import mobappdev.example.nback_cimpl.R
+import mobappdev.example.nback_cimpl.R.id.planets_spinner
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameType
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
 
@@ -53,6 +73,7 @@ fun speakHome(  textToSpeech: TextToSpeech, text: String) {
     textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     vm: GameViewModel,
@@ -100,6 +121,8 @@ fun HomeScreen(
                     }) {
                         Text(text = "Start game")
                     }
+
+                    SomeScreen()
                 }
             }
             Row(
@@ -138,13 +161,44 @@ fun HomeScreen(
     }
 }
 
+@Composable
+fun CustomDropdownMenu(
+    items: List<String>,
+    onItemSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedIndex by remember { mutableStateOf(0) }
 
+    Column {
+        Button(onClick = { expanded = true }) {
+            Text(text = items[selectedIndex])
+        }
 
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            items.forEachIndexed { index, item ->
+                DropdownMenuItem(onClick = {
+                    selectedIndex = index
+                    expanded = false
+                    onItemSelected(item)
+                }, text={
+                    Text(text = item)
+                })
+            }
+        }
+    }
+}
 
+@Composable
+fun SomeScreen() {
+    val items = listOf("Item 1", "Item 2", "Item 3") // The list of items for the dropdown
+    val selectedItem = remember { mutableStateOf(items.first()) }
 
-
-
-
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem.value = it })
+    Text("Selected item is: ${selectedItem.value}")
+}
 
 
 @Preview
