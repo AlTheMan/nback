@@ -70,6 +70,7 @@ class GameVM(
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var events = emptyArray<Int>()  // Array with all events
     private var eventCounter: Int=0; //counts how many times an event has occured. how many times a switch between numbers.
+    private var eventCounterChecker: Int=0 //  checks if user has already checked match before for this event. Is used in conjunction with eventChecker
 
     override fun setGameType(gameType: GameType) {
         // update the gametype in the gamestate
@@ -79,6 +80,7 @@ class GameVM(
     override fun startGame() {
         job?.cancel()  // Cancel any existing game loop
         eventCounter=0
+        eventCounterChecker=0
         resetScore()
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
@@ -112,12 +114,11 @@ class GameVM(
     }
 
     override fun checkMatch() {
-        //TODO: add boolean to check if user has already checked match before for this event. and reset it between each delay
-        
-        var eventsIndex=eventCounter-nBack
-        if(eventsIndex>=0){
+
+        if(eventCounter>=nBack && eventCounterChecker!=eventCounter){
+            eventCounterChecker=eventCounter; //  checks if user has already checked match before for this event. and reset it between each delay
             var currentEvent = _gameState.value.eventValue
-            var nStepBack= events.get(eventsIndex)
+            var nStepBack= events.get(eventCounter-nBack)
             if(currentEvent==nStepBack){
                 increaseScore()
             }else{
