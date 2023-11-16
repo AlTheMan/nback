@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import mobappdev.example.nback_cimpl.R
+import mobappdev.example.nback_cimpl.ui.viewmodels.GameType
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
 
 /**
@@ -72,11 +73,14 @@ fun GameScreen(
 
     // Observe the eventCounter using LaunchedEffect
     LaunchedEffect(eventCounter) {
-        println("test")
-        // This block will be executed whenever vm.eventCounter changes
-        val eventValue = gameState.eventValue
-        // Call the speak function with the updated eventCounter
-        speak(textToSpeech, "$eventValue")
+        if(gameState.gameType.equals(GameType.Audio) || gameState.gameType.equals(GameType.AudioVisual)){
+            if(gameState.eventValueAudio!=-1){
+                // This block will be executed whenever vm.eventCounter changes
+                val eventValueAudio = (gameState.eventValueAudio + 'a'.code).toChar()
+                // Call the speak function with the updated eventCounter
+                speak(textToSpeech, eventValueAudio.toString())
+            }
+        }
     }
 
     Scaffold(
@@ -105,13 +109,11 @@ fun GameScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    GenerateTiles(Modifier, gameState.eventValue)
-
-
-                    if (gameState.eventValue != -1) {
+                    GenerateTiles(Modifier, gameState.eventValueVisual)
+                    if (gameState.eventValueVisual != -1 || gameState.eventValueAudio != -1) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "Current eventValue is: ${gameState.eventValue}",
+                            text = "Current eventValueVisual/audio is: ${gameState.eventValueVisual}, ${gameState.eventValueAudio}",
                             textAlign = TextAlign.Center
                         )
                     }
@@ -133,7 +135,7 @@ fun GameScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    vm.checkMatchVisual()
+                    vm.checkMatchAudio()
                     // Todo: change this button behaviour
 
                 }) {
@@ -179,10 +181,10 @@ fun GenerateTiles(modifier: Modifier = Modifier, currentTile: Int) {
                     Box(
                         modifier= modifier
                             .background(boxColor)
-                            .padding(horizontal = 32.dp, vertical = 32.dp)
+                            .padding(horizontal = 48.dp, vertical = 32.dp)
                             //.aspectRatio(1F)
                     ) {
-                        Text("Box");
+                        Text("");
                     }
                     Spacer(
                         modifier = Modifier.width(16.dp)

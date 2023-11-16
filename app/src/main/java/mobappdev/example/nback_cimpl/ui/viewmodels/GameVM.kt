@@ -90,7 +90,8 @@ class GameVM(
         get() = _eventCounter
 
     //private var eventCounter: Int=0; //counts how many times an event has occured. how many times a switch between numbers.
-    private var eventCounterChecker: Int=0 //  checks if user has already checked match before for this event. Is used in conjunction with eventChecker
+    private var eventCounterCheckerVisual: Int=0 //  checks if user has already checked match before for this event. Is used in conjunction with eventChecker
+    private var eventCounterCheckerAudio: Int=0 //  checks if user has already checked match before for this event. Is used in conjunction with eventChecker
 
     override fun setGameType(gameType: GameType) {
         // update the gametype in the gamestate
@@ -98,9 +99,11 @@ class GameVM(
     }
 
     override fun startGame() {
+        Log.d("GameVM", "inne i startGame")
         job?.cancel()  // Cancel any existing game loop
         _eventCounter.value=0
-        eventCounterChecker=0
+        eventCounterCheckerVisual=0
+        eventCounterCheckerAudio=0
         resetScore()
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
@@ -111,8 +114,8 @@ class GameVM(
         Log.d("GameVM", "The following (Audio) sequence was generated: ${eventsAudio.contentToString()}")
 
 
-        //val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
-        //events = myArray
+        val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
+        eventsAudio = myArray
         //Log.d("GameVM, startGame, eventSize: ", events.size.toString())
         job = viewModelScope.launch {
             when (gameState.value.gameType) {
@@ -140,11 +143,10 @@ class GameVM(
 
     override fun checkMatchAudio() {
 
-        if (eventCounter.value >= nBack && eventCounterChecker != eventCounter.value) {
-            eventCounterChecker =
-                eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
-            var currentEvent = _gameState.value.eventValue
-            var nStepBack = eventsVisual.get(eventCounter.value - nBack)
+        if (eventCounter.value >= nBack && eventCounterCheckerAudio != eventCounter.value) {
+            eventCounterCheckerAudio = eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
+            var currentEvent = _gameState.value.eventValueAudio
+            var nStepBack = eventsAudio.get(eventCounter.value - nBack)
             if (currentEvent == nStepBack) {
                 increaseScore()
             } else {
@@ -155,9 +157,9 @@ class GameVM(
 
     override fun checkMatchVisual() {
 
-        if(eventCounter.value>=nBack && eventCounterChecker!=eventCounter.value){
-            eventCounterChecker=eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
-            var currentEvent = _gameState.value.eventValue
+        if(eventCounter.value>=nBack && eventCounterCheckerVisual!=eventCounter.value){
+            eventCounterCheckerVisual=eventCounter.value; //  checks if user has already checked match before for this event. and reset it between each delay
+            var currentEvent = _gameState.value.eventValueVisual
             var nStepBack= eventsVisual.get(eventCounter.value-nBack)
             if(currentEvent==nStepBack){
                 increaseScore()
@@ -175,7 +177,7 @@ class GameVM(
     private suspend fun runAudioGame(events: Array<Int>) {
         // Todo: Make work for Basic grade
         for (value in events) {
-            _gameState.value = _gameState.value.copy(eventValue = value)
+            _gameState.value = _gameState.value.copy(eventValueAudio = value)
             delay(_eventInterval.value)
             _eventCounter.value++
         }
@@ -184,7 +186,7 @@ class GameVM(
     private suspend fun runVisualGame(events: Array<Int>){
         // Todo: Replace this code for actual game code
         for (value in events) {
-            _gameState.value = _gameState.value.copy(eventValue = value)
+            _gameState.value = _gameState.value.copy(eventValueVisual = value)
             delay(_eventInterval.value)
             _eventCounter.value++
         }
@@ -223,7 +225,9 @@ enum class GameType{
 data class GameState(
     // You can use this state to push values from the VM to your UI.
     val gameType: GameType =  GameType.Visual ,  // Type of the game
-    val eventValue: Int = -1  // The value of the array string
+    val eventValueAudio: Int = -1,  // The value of the array string
+    val eventValueVisual: Int = -1  // The value of the array string
+
 )
 
 
