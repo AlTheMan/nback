@@ -54,6 +54,8 @@ fun HomeScreen(
 ) {
     val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val gameState by vm.gameState.collectAsState()
+    val eventInterval by vm.eventInterval.collectAsState()
+    val nrOfEventsPerRound by vm.nrOfEventsPerRound.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -68,8 +70,28 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = Modifier.padding(32.dp),
+                modifier = Modifier.padding(8.dp),
                 text = "High-Score = $highscore",
+                style = MaterialTheme.typography.headlineLarge
+            )
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = "N = ${vm.nBack}",
+                style = MaterialTheme.typography.headlineLarge
+            )
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = "delay = $eventInterval ms",
+                style = MaterialTheme.typography.headlineLarge
+            )
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = "gameType = ${gameState.gameType}",
+                style = MaterialTheme.typography.headlineLarge
+            )
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = "nrOfEventsPerRound = $nrOfEventsPerRound",
                 style = MaterialTheme.typography.headlineLarge
             )
             // Todo: You'll probably want to change this "BOX" part of the composable

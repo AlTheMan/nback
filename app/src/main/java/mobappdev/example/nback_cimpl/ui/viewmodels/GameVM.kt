@@ -39,11 +39,12 @@ interface GameViewModel {
     val score: StateFlow<Int> //current score
     val highscore: StateFlow<Int> //highscore
     val nBack: Int //n number
-
-    fun setGameType(gameType: GameType)
+    val eventInterval: StateFlow<Long> //how long interval between each tile. in miliseconds
+    val nrOfEventsPerRound: StateFlow<Int>
+    fun setGameType(gameType: GameType) //Audio, visual, audio-visual
     fun startGame()
 
-    fun checkMatch()
+    fun checkMatch() //check if you scored a point.
 }
 
 class GameVM(
@@ -62,10 +63,19 @@ class GameVM(
         get() = _highscore
 
     // nBack is currently hardcoded
-    override val nBack: Int = 2
+    override val nBack: Int = 2 //TODO: viewable object?
 
     private var job: Job? = null  // coroutine job for the game event
-    private val eventInterval: Long = 2000L  // 2000 ms (2s)
+    //private val eventInterval: Long = 2000L
+    // Implement eventInterval
+
+    private val _eventInterval = MutableStateFlow(2000L) // 2000 ms (2s)
+    override val eventInterval: StateFlow<Long>
+        get() = _eventInterval
+
+    private val _nrOfEventsPerRound = MutableStateFlow(10) //"size"
+    override val nrOfEventsPerRound: StateFlow<Int>
+        get() = _nrOfEventsPerRound
 
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var events = emptyArray<Int>()  // Array with all events
@@ -84,7 +94,7 @@ class GameVM(
         resetScore()
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
-        events = nBackHelper.generateNBackString(10, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
+        events = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
         Log.d("GameVM", "The following sequence was generated: ${events.contentToString()}")
         val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
         events = myArray
@@ -140,7 +150,7 @@ class GameVM(
         // Todo: Replace this code for actual game code
         for (value in events) {
             _gameState.value = _gameState.value.copy(eventValue = value)
-            delay(eventInterval)
+            delay(_eventInterval.value)
             eventCounter++
         }
 
@@ -178,17 +188,22 @@ enum class GameType{
 
 data class GameState(
     // You can use this state to push values from the VM to your UI.
-    val gameType: GameType = GameType.Visual,  // Type of the game
+    val gameType: GameType =  GameType.Visual ,  // Type of the game
     val eventValue: Int = -1  // The value of the array string
 )
 
 class FakeVM: GameViewModel{
     override val gameState: StateFlow<GameState>
         get() = MutableStateFlow(GameState()).asStateFlow()
+    override val nrOfEventsPerRound: StateFlow<Int>
+        get() =  MutableStateFlow(10).asStateFlow()
     override val score: StateFlow<Int>
         get() = MutableStateFlow(2).asStateFlow()
     override val highscore: StateFlow<Int>
         get() = MutableStateFlow(42).asStateFlow()
+
+    override val eventInterval: StateFlow<Long>
+        get() = MutableStateFlow(42L).asStateFlow()
     override val nBack: Int
         get() = 2
 
