@@ -264,7 +264,7 @@ fun LandScapeGameScreen(
         ) {
             Box(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.8f)
                     .fillMaxWidth()
                     .fillMaxHeight()
                 ,
@@ -272,7 +272,6 @@ fun LandScapeGameScreen(
             ) {
                 Column(
                     modifier= Modifier
-
                         .aspectRatio(1f)
                     ,
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -284,10 +283,11 @@ fun LandScapeGameScreen(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(16.dp)
+                    .padding(end = 16.dp) // Add padding to the right
                     .weight(0.4f)
                 ,
                 verticalArrangement = Arrangement.SpaceAround,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     //modifier = Modifier.padding(32.dp),
@@ -306,6 +306,7 @@ fun LandScapeGameScreen(
                     vm.checkMatchAudio()
                 },
                     modifier = Modifier
+                        .padding(top = 16.dp) // Add padding to the top
                         .graphicsLayer(
                             rotationZ = if (isShakingAudio) 30f else 0f, //roterar 30 grader, ananrs 0 grader. f står för float tror jag.
                         )
@@ -314,7 +315,7 @@ fun LandScapeGameScreen(
                         painter = painterResource(id = R.drawable.sound_on),
                         contentDescription = "Sound",
                         modifier = Modifier
-                            .height(48.dp)
+                            .height(64.dp)
                             .aspectRatio(3f / 2f)
                     )
                 }
@@ -323,6 +324,7 @@ fun LandScapeGameScreen(
                         vm.checkMatchVisual();
                     },
                     modifier = Modifier
+                        .padding(top = 16.dp)
                         .graphicsLayer(
                             rotationZ = if (isShakingVisual) 30f else 0f, //roterar 30 grader, ananrs 0 grader. f står för float tror jag.
                         )
@@ -331,7 +333,7 @@ fun LandScapeGameScreen(
                         painter = painterResource(id = R.drawable.visual),
                         contentDescription = "Visual",
                         modifier = Modifier
-                            .height(48.dp)
+                            .height(64.dp)
                             .aspectRatio(3f / 2f)
                     )
                 }
