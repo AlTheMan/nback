@@ -5,6 +5,7 @@ import android.speech.tts.TextToSpeech
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -50,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -162,7 +165,12 @@ fun LandScapeHomeScreen(
                                 //vm.startGame()
                                 navController.navigate("GameScreen")
                             }) {
-                            Text(text = "Start game")
+                            Text(text = "START GAME",
+                                style = MaterialTheme.typography.headlineLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            )
                         }
 
                     }
@@ -258,20 +266,43 @@ fun PortraitHomeScreen(
         ) {
             Text(
                 modifier = Modifier.padding(8.dp),
-                text = "High-Score = $highscore\n",
-                style = MaterialTheme.typography.headlineLarge
+                text = "N-BACK",
+                //style = MaterialTheme.typography.headlineLarge
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary)
             )
+
             Text(
                 modifier = Modifier.padding(8.dp),
-                text = "Current Settings:\n"+
-                        "N = ${nBack}\n"+
-                        "delay = $eventInterval ms\n"+
-                        "gameType = ${gameState.gameType}\n"+
-                        "nrOfEventsPerRound = $nrOfEventsPerRound\n"+
-                        "nrOfSpokenLetters= $nrOfSpokenLetters\n"+
-                        "grid size = ${gridSize}x${gridSize}",
-                style = MaterialTheme.typography.bodyLarge
+                text = "High-Score = $highscore\n",
+                //style = MaterialTheme.typography.headlineLarge
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary)
             )
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
+                    .padding(16.dp)
+                    .border(1.dp, Color.Gray, RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = "Current Settings:\n" +
+                            "N = ${nBack}\n" +
+                            "delay = $eventInterval ms\n" +
+                            "gameType = ${gameState.gameType}\n" +
+                            "nrOfEventsPerRound = $nrOfEventsPerRound\n" +
+                            "nrOfSpokenLetters= $nrOfSpokenLetters\n" +
+                            "grid size = ${gridSize}x${gridSize}",
+                    //style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                )
+            }
             Box(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center
@@ -302,9 +333,12 @@ fun PortraitHomeScreen(
                         //vm.startGame()
                         navController.navigate("GameScreen")
                     }) {
-                        Text(text = "Start game")
+                        Text(text = "START GAME",
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.inverseOnSurface)
+                        )
                     }
-
                 }
             }
             Row(
