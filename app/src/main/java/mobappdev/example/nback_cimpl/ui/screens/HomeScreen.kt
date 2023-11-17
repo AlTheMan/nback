@@ -1,5 +1,6 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
+import android.content.res.Configuration
 import android.speech.tts.TextToSpeech
 import android.widget.ArrayAdapter
 import android.widget.Spinner
@@ -18,6 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
@@ -44,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -80,6 +84,152 @@ fun HomeScreen(
     navController: NavHostController,
     textToSpeech: TextToSpeech
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    Scaffold {
+        if(isLandscape){
+            LandScapeHomeScreen(vm, navController,textToSpeech, Modifier.padding(it))
+        }
+        else{
+            PortraitHomeScreen(vm, navController,textToSpeech, Modifier.padding(it))
+        }
+    }
+}
+
+
+@Composable
+fun LandScapeHomeScreen(
+    vm: GameViewModel,
+    navController: NavHostController,
+    textToSpeech: TextToSpeech,
+    modifier: Modifier
+)
+{
+    val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
+    val gameState by vm.gameState.collectAsState()
+    val eventInterval by vm.eventInterval.collectAsState()
+    val nBack by vm.nBack.collectAsState()
+    val gridSize by vm.gridSize.collectAsState()
+    val nrOfSpokenLetters by vm.nrOfSpokenLetters.collectAsState()
+    val nrOfEventsPerRound by vm.nrOfEventsPerRound.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row{
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = "High-Score = $highscore\n",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = "Current Settings:\n"+
+                            "N = ${nBack}\n"+
+                            "delay = $eventInterval ms\n"+
+                            "gameType = ${gameState.gameType}\n"+
+                            "nrOfEventsPerRound = $nrOfEventsPerRound\n"+
+                            "nrOfSpokenLetters= $nrOfSpokenLetters\n"+
+                            "grid size = ${gridSize}x${gridSize}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(80.dp)
+                                .padding(horizontal = 16.dp)
+                            ,
+                            onClick = {
+                                //vm.startGame()
+                                navController.navigate("GameScreen")
+                            }) {
+                            Text(text = "Start game")
+                        }
+
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(onClick = { navController.navigate("SettingScreen")
+                }){
+                    Text(text = "Settings")
+                }
+                Button(onClick = {
+                    speakHome(textToSpeech,"Audio selected")
+                    vm.setGameType(GameType.Audio);
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.sound_on),
+                        contentDescription = "Sound",
+                        modifier = Modifier
+                            .height(48.dp)
+                            .aspectRatio(3f / 2f)
+                    )
+                }
+                Button(onClick = {
+                    vm.setGameType(GameType.AudioVisual);
+                }) {
+                    Box(
+                        modifier = Modifier
+                            .height(48.dp)
+                            .aspectRatio(3f / 2f),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Text("Both")
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        vm.setGameType(GameType.Visual);
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.visual),
+                        contentDescription = "Visual",
+                        modifier = Modifier
+                            .height(48.dp)
+                            .aspectRatio(3f / 2f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun PortraitHomeScreen(
+    vm: GameViewModel,
+    navController: NavHostController,
+    textToSpeech: TextToSpeech,
+    modifier: Modifier
+)
+{
     val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val gameState by vm.gameState.collectAsState()
     val eventInterval by vm.eventInterval.collectAsState()
