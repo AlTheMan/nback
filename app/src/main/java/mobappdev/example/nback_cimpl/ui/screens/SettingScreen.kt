@@ -86,8 +86,8 @@ fun NrOfSpokenLettersscreen(vm: GameViewModel) {
     val nrOfSpokenLetters by vm.nrOfSpokenLetters.collectAsState()
     val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
     var selectedItem by remember { mutableStateOf(nrOfSpokenLetters.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="nrOfSpokenLetters")
-    Text("Selected NrOfSpokenLetters is: ${selectedItem}")
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Nr of Spoken Letters: " +selectedItem.toString())
+    //Text("NrOfSpokenLetters is: ${selectedItem}")
     vm.setNrOfSpokenLetters(selectedItem.toInt())
 }
 
@@ -96,9 +96,9 @@ fun SizeOfGridScreen(vm: GameViewModel) {
     val gridSize by vm.gridSize.collectAsState()
     val items = listOf("1", "2", "3", "4", "5") // The list of items for the dropdown
     var selectedItem by remember { mutableStateOf(gridSize.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Size of Grid")
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Size of Grid: " +selectedItem.toString())
     vm.setGridSize(selectedItem.toInt())
-    Text("Selected gridSize is: ${selectedItem}")
+    //Text("Selected gridSize is: ${selectedItem}")
 }
 
 
@@ -107,9 +107,9 @@ fun TimeBetweenEventsScreen(vm: GameViewModel) {
     val eventInterval by vm.eventInterval.collectAsState()
     val items = listOf("500", "1000", "1500", "2000", "2500", "3000") // The list of items for the dropdown
     var selectedItem by remember { mutableStateOf(eventInterval.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Time between events, ms")
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Time between events: " +selectedItem.toString())
     vm.setEventInterval(selectedItem.toLong())
-    Text("Selected TimeBetweenEvents is: ${selectedItem}")
+    //Text("Time Between Events is: ${selectedItem} ms")
 }
 
 
@@ -120,9 +120,9 @@ fun NrOfEventsScreen(vm: GameViewModel) {
     val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
     //val items = (1..20).map { it.toString() }     // Define the list of items for the dropdown
     var selectedItem by remember { mutableStateOf(nrOfEventsPerRound.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Nr of events")
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Nr of events: "+selectedItem.toString())
     vm.setNrOfEvents(selectedItem.toInt())
-    Text("Selected NrOfEvents is: ${selectedItem}")
+    //Text("NrOfEvents is: ${selectedItem}")
 }
 
 @Composable
@@ -130,9 +130,9 @@ fun NScreen(vm: GameViewModel) {
     val nBack by vm.nBack.collectAsState()
     val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
     var selectedItem by remember { mutableStateOf(nBack.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="N")
+    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="N: "+selectedItem.toString())
     vm.setNBack(selectedItem.toInt())
-    Text("Selected N is: ${selectedItem}")
+    //Text("N is: ${selectedItem}")
 }
 
 @Composable

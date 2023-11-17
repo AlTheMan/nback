@@ -126,7 +126,9 @@ fun HomeScreen(
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(80.dp),
+                            .height(80.dp)
+                            .padding(horizontal = 16.dp)
+                        ,
                         onClick = {
                         //vm.startGame()
                         navController.navigate("GameScreen")
@@ -139,7 +141,7 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -196,7 +198,8 @@ fun CustomDropdownMenu(
 
     Column {
         Button(onClick = { expanded = true }) {
-            Text(text = title+": " + items[selectedIndex])
+            Text(text=title)
+            //Text(text = title+": " + items[selectedIndex])
         }
 
         DropdownMenu(
