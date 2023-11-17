@@ -12,6 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import mobappdev.example.nback_cimpl.GameApplication
@@ -56,6 +57,7 @@ interface GameViewModel {
     fun setNrOfEvents(nrOfevents: Int)
     fun setGridSize(gridSize: Int)
     fun setNrOfSpokenLetters(nrOfSpokenLetters: Int)
+    fun saveSettings()
 }
 
 class GameVM(
@@ -134,6 +136,7 @@ class GameVM(
         Log.d("GameVM", "The following (Audio) sequence was generated: ${eventsAudio.contentToString()}")
 
 
+
         val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
         val myArray2 = arrayOf(1, 2, 1, 2, 1, 2, 1, 2, 1, 9)
         //eventsVisual = myArray2
@@ -154,6 +157,33 @@ class GameVM(
         }
     }
 
+    override fun saveSettings(){
+        viewModelScope.launch {
+            saveSettingsToDatabase()
+        }
+    }
+
+     private suspend fun saveSettingsToDatabase(){
+
+         viewModelScope.launch{
+             launch {
+                 userPreferencesRepository.saveGridSize(gridSize.value)
+             }
+             launch{
+                 userPreferencesRepository.saveNBack(nBack.value)
+             }
+             launch{
+                 userPreferencesRepository.saveNrOfEvents(nrOfEventsPerRound.value)
+             }
+             launch{
+                 userPreferencesRepository.saveNrOfSpokenLetters(nrOfSpokenLetters.value)
+             }
+             launch{
+                 userPreferencesRepository.saveEventInterval(eventInterval.value)
+
+             }
+         }
+    }
     private fun resetScore(){
         _score.value=0
     }
@@ -309,9 +339,57 @@ class GameVM(
     init {
         // Code that runs during creation of the vm
         viewModelScope.launch {
+            launch {
+                userPreferencesRepository.highscore.collect { value ->
+                    _highscore.value = value
+                }
+            }
+            launch {
+                userPreferencesRepository.nrofspokenletters.collect { value ->
+                    _nrOfSpokenLetters.value = value
+                }
+            }
+            launch {
+                userPreferencesRepository.nback.collect { value ->
+                    _nBack.value = value
+                }
+            }
+            launch {
+                userPreferencesRepository.gridsize.collect { value ->
+                    _gridSize.value = value
+                }
+            }
+            launch {
+                userPreferencesRepository.nrofevents.collect { value ->
+                    _nrOfEventsPerRound.value = value
+                }
+            }
+
+            launch {
+                userPreferencesRepository.eventinterval.collect { value ->
+                    _eventInterval.value = value
+                }
+            }
+            /*
             userPreferencesRepository.highscore.collect {
                 _highscore.value = it
             }
+            userPreferencesRepository.nrofspokenletters.collect{
+                _nrOfSpokenLetters.value=it
+            }
+            //userPreferencesRepository.eventInterval.collect{
+            //    _eventInterval.value=it
+            //}
+            userPreferencesRepository.nback.collect{
+                _nBack.value=it
+            }
+            userPreferencesRepository.gridsize.collect{
+                _gridSize.value=it
+            }
+            userPreferencesRepository.nrofevents.collect{
+                _nrOfEventsPerRound.value=it
+            }
+             */
         }
     }
 }

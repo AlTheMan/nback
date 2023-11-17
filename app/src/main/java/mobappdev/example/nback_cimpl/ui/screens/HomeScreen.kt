@@ -116,11 +116,10 @@ fun HomeScreen(
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    NScreen(vm)
-                    NrOfEventsScreen(vm)
-                    TimeBetweenEventsScreen(vm)
-                    SizeOfGridScreen(vm)
-                    NrOfSpokenLettersscreen(vm)
+                    Button(onClick = { navController.navigate("SettingScreen")
+                    }){
+                        Text(text = "Settings")
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -156,6 +155,19 @@ fun HomeScreen(
                             .aspectRatio(3f / 2f)
                     )
                 }
+                Button(onClick = {
+                    vm.setGameType(GameType.AudioVisual);
+                }) {
+                    Box(
+                        modifier = Modifier
+                            .height(48.dp)
+                            .aspectRatio(3f / 2f),
+                        contentAlignment = Alignment.Center
+                    ){
+                        Text("Both")
+                    }
+                }
+
                 Button(
                     onClick = {
                         vm.setGameType(GameType.Visual);
@@ -204,69 +216,6 @@ fun CustomDropdownMenu(
     }
 }
 
-
-@Composable
-fun NrOfSpokenLettersscreen(vm: GameViewModel) {
-    val nrOfSpokenLetters by vm.nrOfSpokenLetters.collectAsState()
-    val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
-    var selectedItem by remember { mutableStateOf(nrOfSpokenLetters.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="nrOfSpokenLetters")
-    //Text("Selected NrOfEvents is: ${selectedItem.value}")
-    vm.setNrOfSpokenLetters(selectedItem.toInt())
-}
-
-@Composable
-fun SizeOfGridScreen(vm: GameViewModel) {
-    val gridSize by vm.gridSize.collectAsState()
-    val items = listOf("1", "2", "3", "4", "5") // The list of items for the dropdown
-    var selectedItem by remember { mutableStateOf(gridSize.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Size of Grid")
-    vm.setGridSize(selectedItem.toInt())
-    //Text("Selected NrOfEvents is: ${selectedItem.value}")
-}
-
-
-@Composable
-fun TimeBetweenEventsScreen(vm: GameViewModel) {
-    val eventInterval by vm.eventInterval.collectAsState()
-    val items = listOf("500", "1000", "1500", "2000", "2500", "3000") // The list of items for the dropdown
-    var selectedItem by remember { mutableStateOf(eventInterval.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Time between events, ms")
-    vm.setEventInterval(selectedItem.toLong())
-    //Text("Selected NrOfEvents is: ${selectedItem.value}")
-}
-
-
-
-@Composable
-fun NrOfEventsScreen(vm: GameViewModel) {
-    val nrOfEventsPerRound by vm.nrOfEventsPerRound.collectAsState()
-    val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
-    //val items = (1..20).map { it.toString() }     // Define the list of items for the dropdown
-    var selectedItem by remember { mutableStateOf(nrOfEventsPerRound.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Nr of events")
-    vm.setNrOfEvents(selectedItem.toInt())
-    //Text("Selected NrOfEvents is: ${selectedItem.value}")
-}
-
-@Composable
-fun NScreen(vm: GameViewModel) {
-    val nBack by vm.nBack.collectAsState()
-    val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
-    var selectedItem by remember { mutableStateOf(nBack.toString()) }
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="N")
-    vm.setNBack(selectedItem.toInt())
-    //Text("Selected N is: ${selectedItem.value}")
-}
-
-@Composable
-fun SomeScreen() {
-    val items = listOf("Item 1", "Item 2", "Item 3") // The list of items for the dropdown
-    val selectedItem = remember { mutableStateOf(items.first()) }
-
-    CustomDropdownMenu(items = items, onItemSelected = { selectedItem.value = it }, title="test")
-    Text("Selected item is: ${selectedItem.value}")
-}
 
 
 @Preview
