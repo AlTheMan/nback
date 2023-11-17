@@ -221,6 +221,7 @@ fun LandScapeGameScreen(
     var isShakingVisual by remember { mutableStateOf(false) }
     var isShakingAudio by remember { mutableStateOf(false) }
 
+    //detta borde wgentligen vara i Vy-modellen istället.
     LaunchedEffect(gameState.correctVisualPress){
         if(!gameState.correctVisualPress){
             isShakingVisual = true

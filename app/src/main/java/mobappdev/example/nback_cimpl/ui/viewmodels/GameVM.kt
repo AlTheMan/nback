@@ -131,11 +131,12 @@ class GameVM(
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
         eventsVisual = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, gridSize.value*gridSize.value, 30, nBack.value).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
         eventsAudio = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, nrOfSpokenLetters.value, 30, nBack.value).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
+        while(eventsVisual.contentEquals(eventsAudio)){
+            eventsAudio = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, nrOfSpokenLetters.value, 30, nBack.value).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
+        }
 
         Log.d("GameVM", "The following (Visual) sequence was generated: ${eventsVisual.contentToString()}")
         Log.d("GameVM", "The following (Audio) sequence was generated: ${eventsAudio.contentToString()}")
-
-
 
         val myArray = arrayOf(1, 2, 6, 2, 6, 2, 1, 2, 1, 9)
         val myArray2 = arrayOf(1, 2, 1, 2, 1, 2, 1, 2, 1, 9)
@@ -322,22 +323,25 @@ class GameVM(
     }
 
     private suspend fun runAudioVisualGame(eventsAudio: Array<Int>, eventsVisual: Array<Int>){
-        // Calculate the initial remaining tiles
+        // Calculate the initial remaining tiles/moves
         _gameState.value = _gameState.value.copy(nrOfTilesLeft = _nrOfEventsPerRound.value)
 
 
-        for (i in 0 until eventsVisual.size) { //eventsVisual och eventsAudio är lika stora, så man kan använda vilken som.
+        for (i in eventsVisual.indices) { //eventsVisual och eventsAudio är lika stora, så man kan använda vilken som.
             _gameState.value = _gameState.value.copy(eventValueVisual = eventsVisual[i])
             _gameState.value = _gameState.value.copy(eventValueAudio = eventsAudio[i])
             delay(_eventInterval.value)
             _eventCounter.value++
 
-            // Calculate the remaining tiles
+            // Calculate the remaining tiles/moves
             val tilesLeft = _nrOfEventsPerRound.value - _eventCounter.value
             _gameState.value = _gameState.value.copy(nrOfTilesLeft = tilesLeft)
 
             //reset correctVisualPress
             _gameState.value = _gameState.value.copy(correctVisualPress = true)
+            //reset correctAudioPress
+            _gameState.value = _gameState.value.copy(correctAudioPress =  true)
+
 
         }
     }
