@@ -84,6 +84,8 @@ fun HomeScreen(
     val gameState by vm.gameState.collectAsState()
     val eventInterval by vm.eventInterval.collectAsState()
     val nBack by vm.nBack.collectAsState()
+    val gridSize by vm.gridSize.collectAsState()
+    val nrOfSpokenLetters by vm.nrOfSpokenLetters.collectAsState()
     val nrOfEventsPerRound by vm.nrOfEventsPerRound.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -109,8 +111,10 @@ fun HomeScreen(
                         "N = ${nBack}\n"+
                         "delay = $eventInterval ms\n"+
                         "gameType = ${gameState.gameType}\n"+
-                        "nrOfEventsPerRound = $nrOfEventsPerRound",
-                style = MaterialTheme.typography.headlineSmall
+                        "nrOfEventsPerRound = $nrOfEventsPerRound\n"+
+                        "nrOfSpokenLetters= $nrOfSpokenLetters\n"+
+                        "grid size = ${gridSize}x${gridSize}",
+                style = MaterialTheme.typography.bodyLarge
             )
             // Todo: You'll probably want to change this "BOX" part of the composable
             Box(
