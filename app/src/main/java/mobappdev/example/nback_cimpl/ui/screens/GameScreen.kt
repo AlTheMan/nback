@@ -255,48 +255,53 @@ fun LandScapeGameScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(32.dp),
-                text="score: $score\n",
-                style = MaterialTheme.typography.headlineSmall
-            )
-            // Todo: You'll probably want to change this "BOX" part of the composable
             Box(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                ,
                 contentAlignment = Alignment.Center
             ) {
                 Column(
                     modifier= Modifier
-                        .fillMaxHeight()
+
                         .aspectRatio(1f)
                     ,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     GenerateTiles(Modifier, gameState.eventValueVisual, gridSize)
-                    Button(onClick = {
-                        vm.startGame()
-                    }) {
-                        Text(
-                            text = "Start",
-                        )
-
-                    }
                 }
             }
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxHeight()
+                    .padding(16.dp)
+                    .weight(0.4f)
+                ,
+                verticalArrangement = Arrangement.SpaceAround,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(
+                    //modifier = Modifier.padding(32.dp),
+                    text="score: $score\n",
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Button(onClick = {
+                    vm.startGame()
+                }) {
+                    Text(
+                        text = "Start",
+                    )
+
+                }
                 Button(onClick = { //Audio-button
                     vm.checkMatchAudio()
                 },
