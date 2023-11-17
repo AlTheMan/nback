@@ -128,11 +128,6 @@ fun LandScapeHomeScreen(
             Row{
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = "High-Score = $highscore\n",
-                    style = MaterialTheme.typography.headlineLarge
-                )
-                Text(
-                    modifier = Modifier.padding(8.dp),
                     text = "Current Settings:\n"+
                             "N = ${nBack}\n"+
                             "delay = $eventInterval ms\n"+
@@ -142,6 +137,7 @@ fun LandScapeHomeScreen(
                             "grid size = ${gridSize}x${gridSize}",
                     style = MaterialTheme.typography.bodyLarge
                 )
+
                 Box(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
@@ -150,7 +146,11 @@ fun LandScapeHomeScreen(
                         Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
+                        Text(
+                            modifier = Modifier.padding(8.dp),
+                            text = "High-Score = $highscore\n",
+                            style = MaterialTheme.typography.headlineLarge
+                        )
                         Button(
                             modifier = Modifier
                                 .fillMaxWidth()
