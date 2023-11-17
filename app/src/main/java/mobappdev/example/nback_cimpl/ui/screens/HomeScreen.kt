@@ -304,7 +304,11 @@ fun PortraitHomeScreen(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(onClick = {
+                Button(
+                    modifier = Modifier
+                        .weight(0.3f)
+                        .padding(horizontal = 2.dp),
+                    onClick = {
                     speakHome(textToSpeech,"Audio selected")
                     vm.setGameType(GameType.Audio);
                 }) {
@@ -316,7 +320,11 @@ fun PortraitHomeScreen(
                             .aspectRatio(3f / 2f)
                     )
                 }
-                Button(onClick = {
+                Button(
+                    modifier = Modifier
+                        .weight(0.3f)
+                        .padding(horizontal = 2.dp),
+                    onClick = {
                     vm.setGameType(GameType.AudioVisual);
                 }) {
                     Box(
@@ -330,6 +338,9 @@ fun PortraitHomeScreen(
                 }
 
                 Button(
+                    modifier = Modifier
+                        .weight(0.3f)
+                        .padding(horizontal = 2.dp),
                     onClick = {
                         vm.setGameType(GameType.Visual);
                     }) {
