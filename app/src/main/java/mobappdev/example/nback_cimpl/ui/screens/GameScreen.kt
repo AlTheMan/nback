@@ -134,15 +134,17 @@ fun PortraitGameScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = Modifier.padding(32.dp),
-                text="score: $score\n" +
-                        "nrOfTilesLeft: ${gameState.nrOfTilesLeft}\n" +
-                        "Current eventValue: ${gameState.eventValueVisual}, ${(gameState.eventValueAudio + 'a'.code).toChar()}",
+                modifier = Modifier
+                    .padding(32.dp)
+                    .weight(0.2f),
+                text="score: $score\n"
+                        //+ "nrOfTilesLeft: ${gameState.nrOfTilesLeft}\n" +
+                        //"Current eventValue: ${gameState.eventValueVisual}, ${(gameState.eventValueAudio + 'a'.code).toChar()}"
+                        ,
                 style = MaterialTheme.typography.headlineSmall
             )
-            // Todo: You'll probably want to change this "BOX" part of the composable
             Box(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.8f),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -150,11 +152,14 @@ fun PortraitGameScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     GenerateTiles(Modifier, gameState.eventValueVisual, gridSize)
-                    Button(onClick = {
+                    Button(
+                        modifier = Modifier.padding(horizontal = 42.dp),
+                        onClick = {
                         vm.startGame()
                     }) {
                         Text(
                             text = "Start",
+                            modifier = Modifier.weight(1f)
                             )
 
                     }
