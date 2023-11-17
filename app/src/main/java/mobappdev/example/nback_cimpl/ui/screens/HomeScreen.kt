@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -337,13 +338,32 @@ fun PortraitHomeScreen(
                     onClick = {
                     vm.setGameType(GameType.AudioVisual);
                 }) {
-                    Box(
+                    Row(
                         modifier = Modifier
                             .height(48.dp)
                             .aspectRatio(3f / 2f),
-                        contentAlignment = Alignment.Center
+                            //.padding(bottom = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ){
-                        Text("Both")
+
+                        Box(modifier = Modifier.weight(0.5f).fillMaxHeight()){
+                            Icon(
+                                painter = painterResource(id = R.drawable.sound_on),
+                                contentDescription = "Visual and Audio",
+                                modifier = Modifier
+                                    .height(48.dp)
+                                    .aspectRatio(3f / 2f)
+                            )
+                        }
+                        Box(modifier = Modifier.weight(0.5f).fillMaxHeight()){
+                            Icon(
+                                painter = painterResource(id = R.drawable.visual),
+                                contentDescription = "Visual and Audio",
+                                modifier = Modifier
+                                    .height(48.dp)
+                                    .aspectRatio(3f / 2f),
+                            )
+                        }
                     }
                 }
 
