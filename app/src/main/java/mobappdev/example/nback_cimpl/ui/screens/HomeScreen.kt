@@ -177,8 +177,13 @@ fun LandScapeHomeScreen(
             ) {
                 Button(onClick = { navController.navigate("SettingScreen")
                 }){
-                    Text(text = "Settings")
-                }
+                Icon(
+                    painter = painterResource(id = R.drawable.settingiconsvg),
+                    contentDescription = "Visual",
+                    modifier = Modifier
+                        .height(48.dp)
+                        .aspectRatio(3f / 2f)
+                )}
                 Button(onClick = {
                     speakHome(textToSpeech,"Audio selected")
                     vm.setGameType(GameType.Audio);
@@ -266,7 +271,6 @@ fun PortraitHomeScreen(
                         "grid size = ${gridSize}x${gridSize}",
                 style = MaterialTheme.typography.bodyLarge
             )
-            // Todo: You'll probably want to change this "BOX" part of the composable
             Box(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.Center
@@ -277,8 +281,13 @@ fun PortraitHomeScreen(
                 ) {
                     Button(onClick = { navController.navigate("SettingScreen")
                     }){
-                        Text(text = "Settings")
-                    }
+                        Icon(
+                            painter = painterResource(id = R.drawable.settingiconsvg),
+                            contentDescription = "Visual",
+                            modifier = Modifier
+                                .height(48.dp)
+                                .aspectRatio(3f / 2f)
+                        )}
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -300,7 +309,8 @@ fun PortraitHomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
