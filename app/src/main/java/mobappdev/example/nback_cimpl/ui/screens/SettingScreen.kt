@@ -1,14 +1,18 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
+import android.content.res.Configuration
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -22,16 +26,90 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
-
 
 @Composable
 fun SettingScreen(
     vm: GameViewModel,
     navController: NavHostController,
     textToSpeech: TextToSpeech
+) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    Scaffold {
+        if(isLandscape){
+            LanscapeSettingScreen(vm, navController,textToSpeech, Modifier.padding(it))
+        }
+        else{
+            PortraitSettingScreen(vm, navController,textToSpeech, Modifier.padding(it))
+        }
+    }
+
+}
+
+
+@Composable
+fun LanscapeSettingScreen(
+    vm: GameViewModel,
+    navController: NavHostController,
+    textToSpeech: TextToSpeech,
+    modifier: Modifier
+) {
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Column {
+                    NScreen(vm)
+                    NrOfEventsScreen(vm)
+                    TimeBetweenEventsScreen(vm)
+                    SizeOfGridScreen(vm)
+                    NrOfSpokenLettersscreen(vm)
+                    Spacer(modifier = Modifier.height(32.dp))
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ){
+                Button(
+                    onClick = { vm.saveSettings() },
+                    modifier = Modifier
+                        .width(220.dp)  // Sets the width
+                        .height(220.dp)
+                        .padding(16.dp)
+                ){
+                    Text(text = "save settings")
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun PortraitSettingScreen(
+    vm: GameViewModel,
+    navController: NavHostController,
+    textToSpeech: TextToSpeech,
+    modifier: Modifier
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 
@@ -84,7 +162,7 @@ fun saveSettings(vm: GameViewModel) {
 @Composable
 fun NrOfSpokenLettersscreen(vm: GameViewModel) {
     val nrOfSpokenLetters by vm.nrOfSpokenLetters.collectAsState()
-    val items = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
+    val items = listOf("3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") // The list of items for the dropdown
     var selectedItem by remember { mutableStateOf(nrOfSpokenLetters.toString()) }
     CustomDropdownMenu(items = items, onItemSelected = { selectedItem = it }, title="Nr of Spoken Letters: " +selectedItem.toString())
     //Text("NrOfSpokenLetters is: ${selectedItem}")
