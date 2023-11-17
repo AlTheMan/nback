@@ -1,18 +1,18 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
+import android.content.res.Configuration
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,25 +65,32 @@ fun GameScreen(
     navController: NavHostController,
     textToSpeech: TextToSpeech
 ) {
-    val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    Scaffold {
+        if(isLandscape){
+            LandScapeGameScreen(vm, navController,textToSpeech, Modifier.padding(it))
+        }
+        else{
+            PortraitGameScreen(vm, navController,textToSpeech, Modifier.padding(it))
+        }
+    }
+}
+
+@Composable
+fun PortraitGameScreen(
+    vm: GameViewModel,
+    navController: NavHostController,
+    textToSpeech: TextToSpeech,
+    modifier: Modifier
+) {
     val gameState by vm.gameState.collectAsState()
     val score by vm.score.collectAsState()
     val eventCounter by vm.eventCounter.collectAsState()
     val gridSize by vm.gridSize.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     var isShakingVisual by remember { mutableStateOf(false) }
     var isShakingAudio by remember { mutableStateOf(false) }
-
-
-    //anvönds för att skaka knappar
-    /*
-    LaunchedEffect(isShaking) {
-        if (isShaking) {
-            delay(400) // Adjust the duration as needed (in milliseconds)
-            isShaking = false
-        }
-    } */
 
     LaunchedEffect(gameState.correctVisualPress){
         if(!gameState.correctVisualPress){
@@ -197,6 +205,135 @@ fun GameScreen(
     }
 }
 
+
+@Composable
+fun LandScapeGameScreen(
+    vm: GameViewModel,
+    navController: NavHostController,
+    textToSpeech: TextToSpeech,
+    modifier: Modifier
+) {
+    val gameState by vm.gameState.collectAsState()
+    val score by vm.score.collectAsState()
+    val eventCounter by vm.eventCounter.collectAsState()
+    val gridSize by vm.gridSize.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
+    var isShakingVisual by remember { mutableStateOf(false) }
+    var isShakingAudio by remember { mutableStateOf(false) }
+
+    LaunchedEffect(gameState.correctVisualPress){
+        if(!gameState.correctVisualPress){
+            isShakingVisual = true
+            delay(400) // Adjust the duration as needed (in milliseconds)
+            isShakingVisual = false
+        }else{
+            isShakingVisual = false
+        }
+    }
+    LaunchedEffect(gameState.correctAudioPress){
+        if(!gameState.correctAudioPress){
+            isShakingAudio = true
+            delay(400) // Adjust the duration as needed (in milliseconds)
+            isShakingAudio = false
+        }else{
+            isShakingAudio = false
+        }
+    }
+
+    // Observe the eventCounter using LaunchedEffect
+    LaunchedEffect(eventCounter) {
+        if(gameState.gameType.equals(GameType.Audio) || gameState.gameType.equals(GameType.AudioVisual)){
+            if(gameState.eventValueAudio!=-1){
+                // This block will be executed whenever vm.eventCounter changes
+                val eventValueAudio = (gameState.eventValueAudio + 'a'.code).toChar()
+                // Call the speak function with the updated eventCounter
+                speak(textToSpeech, eventValueAudio.toString())
+            }
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackBarHostState) }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.padding(32.dp),
+                text="score: $score\n",
+                style = MaterialTheme.typography.headlineSmall
+            )
+            // Todo: You'll probably want to change this "BOX" part of the composable
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier= Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f)
+                    ,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    GenerateTiles(Modifier, gameState.eventValueVisual, gridSize)
+                    Button(onClick = {
+                        vm.startGame()
+                    }) {
+                        Text(
+                            text = "Start",
+                        )
+
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(onClick = { //Audio-button
+                    vm.checkMatchAudio()
+                },
+                    modifier = Modifier
+                        .graphicsLayer(
+                            rotationZ = if (isShakingAudio) 30f else 0f, //roterar 30 grader, ananrs 0 grader. f står för float tror jag.
+                        )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.sound_on),
+                        contentDescription = "Sound",
+                        modifier = Modifier
+                            .height(48.dp)
+                            .aspectRatio(3f / 2f)
+                    )
+                }
+                Button( //Visual-buton
+                    onClick = {
+                        vm.checkMatchVisual();
+                    },
+                    modifier = Modifier
+                        .graphicsLayer(
+                            rotationZ = if (isShakingVisual) 30f else 0f, //roterar 30 grader, ananrs 0 grader. f står för float tror jag.
+                        )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.visual),
+                        contentDescription = "Visual",
+                        modifier = Modifier
+                            .height(48.dp)
+                            .aspectRatio(3f / 2f)
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun GenerateTiles(modifier: Modifier = Modifier, currentTile: Int, gridSize: Int) {

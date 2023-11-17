@@ -321,8 +321,25 @@ class GameVM(
         }
     }
 
-    private fun runAudioVisualGame(eventsAudio: Array<Int>, eventsVisual: Array<Int>){
-        
+    private suspend fun runAudioVisualGame(eventsAudio: Array<Int>, eventsVisual: Array<Int>){
+        // Calculate the initial remaining tiles
+        _gameState.value = _gameState.value.copy(nrOfTilesLeft = _nrOfEventsPerRound.value)
+
+
+        for (i in 0 until eventsVisual.size) { //eventsVisual och eventsAudio är lika stora, så man kan använda vilken som.
+            _gameState.value = _gameState.value.copy(eventValueVisual = eventsVisual[i])
+            _gameState.value = _gameState.value.copy(eventValueAudio = eventsAudio[i])
+            delay(_eventInterval.value)
+            _eventCounter.value++
+
+            // Calculate the remaining tiles
+            val tilesLeft = _nrOfEventsPerRound.value - _eventCounter.value
+            _gameState.value = _gameState.value.copy(nrOfTilesLeft = tilesLeft)
+
+            //reset correctVisualPress
+            _gameState.value = _gameState.value.copy(correctVisualPress = true)
+
+        }
     }
 
 
