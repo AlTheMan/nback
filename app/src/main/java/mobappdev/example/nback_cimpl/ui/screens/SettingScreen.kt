@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -222,3 +224,36 @@ fun SomeScreen() {
     Text("Selected item is: ${selectedItem.value}")
 }
 
+
+
+@Composable
+fun CustomDropdownMenu(
+    title: String,
+    items: List<String>,
+    onItemSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedIndex by remember { mutableStateOf(0) }
+
+    Column {
+        Button(onClick = { expanded = true }) {
+            Text(text=title)
+            //Text(text = title+": " + items[selectedIndex])
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            items.forEachIndexed { index, item ->
+                DropdownMenuItem(onClick = {
+                    selectedIndex = index
+                    expanded = false
+                    onItemSelected(item)
+                }, text={
+                    Text(text = item)
+                })
+            }
+        }
+    }
+}
