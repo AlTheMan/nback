@@ -68,6 +68,7 @@ fun GameScreen(
     val gameState by vm.gameState.collectAsState()
     val score by vm.score.collectAsState()
     val eventCounter by vm.eventCounter.collectAsState()
+    val gridSize by vm.gridSize.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var isShakingVisual by remember { mutableStateOf(false) }
@@ -129,7 +130,7 @@ fun GameScreen(
                 text="score: $score\n" +
                         "nrOfTilesLeft: ${gameState.nrOfTilesLeft}\n" +
                         "Current eventValue: ${gameState.eventValueVisual}, ${(gameState.eventValueAudio + 'a'.code).toChar()}",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineSmall
             )
             // Todo: You'll probably want to change this "BOX" part of the composable
             Box(
@@ -140,9 +141,7 @@ fun GameScreen(
                     Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-                    GenerateTiles(Modifier, gameState.eventValueVisual)
-
+                    GenerateTiles(Modifier, gameState.eventValueVisual, gridSize)
                     Button(onClick = {
                         vm.startGame()
                     }) {
@@ -200,12 +199,17 @@ fun GameScreen(
 
 
 @Composable
-fun GenerateTiles(modifier: Modifier = Modifier, currentTile: Int) {
-    Column (){
+fun GenerateTiles(modifier: Modifier = Modifier, currentTile: Int, gridSize: Int) {
+    Column (
+        modifier= modifier
+    ){
         var counter=0;
-        for (i in 1..3) {
-            Row() {
-                for (j in 1..3) {
+        for (i in 1..gridSize) {
+            Row(
+                modifier= modifier
+                //.weight(1f)
+            ) {
+                for (j in 1..gridSize) {
                     counter++;
                     val boxColor = when {
                         currentTile == counter  -> Color.Gray // Change this to the desired color
@@ -213,20 +217,23 @@ fun GenerateTiles(modifier: Modifier = Modifier, currentTile: Int) {
                     }
                     Box(
                         modifier= modifier
+                            .weight(.2f) // Each box will take up equal space
+                            .padding(horizontal = 4.dp, vertical = 4.dp)
                             .background(boxColor)
-                            .padding(horizontal = 48.dp, vertical = 32.dp)
-                            //.aspectRatio(1F)
+                            //.padding(horizontal = 32.dp, vertical = 16.dp)
+                            //.padding(horizontal = 48.dp, vertical = 32.dp)
+                            .aspectRatio(1F)
                     ) {
                         Text("");
                     }
-                    Spacer(
-                        modifier = Modifier.width(16.dp)
-                    )
+                    //Spacer(
+                    //    modifier = Modifier.width(16.dp)
+                    //)
                 }
             }
-            Spacer(
-                modifier = Modifier.height(16.dp)
-            )
+            //Spacer(
+            //    modifier = Modifier.height(16.dp)
+            //)
         }
     }
 }

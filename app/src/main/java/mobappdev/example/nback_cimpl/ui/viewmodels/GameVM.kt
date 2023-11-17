@@ -145,7 +145,7 @@ class GameVM(
         job = viewModelScope.launch {
             when (gameState.value.gameType) {
                 GameType.Audio -> runAudioGame(eventsAudio)
-                GameType.AudioVisual -> runAudioVisualGame()
+                GameType.AudioVisual -> runAudioVisualGame(eventsAudio, eventsVisual)
                 GameType.Visual -> runVisualGame(eventsVisual)
             }
 
@@ -157,7 +157,7 @@ class GameVM(
         }
     }
 
-    override fun saveSettings(){
+    override fun saveSettings(){ //ta bort viewModelScope här. Den finns redan i anropet.
         viewModelScope.launch {
             saveSettingsToDatabase()
         }
@@ -321,8 +321,8 @@ class GameVM(
         }
     }
 
-    private fun runAudioVisualGame(){
-        // Todo: Make work for Higher grade
+    private fun runAudioVisualGame(eventsAudio: Array<Int>, eventsVisual: Array<Int>){
+        
     }
 
 
