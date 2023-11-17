@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -135,8 +136,8 @@ fun PortraitGameScreen(
         ) {
             Text(
                 modifier = Modifier
-                    .padding(32.dp)
-                    .weight(0.2f),
+                    .padding(16.dp)
+                    .weight(0.1f),  // Text occupies 15% of the vertical space
                 text="score: $score\n"
                         //+ "nrOfTilesLeft: ${gameState.nrOfTilesLeft}\n" +
                         //"Current eventValue: ${gameState.eventValueVisual}, ${(gameState.eventValueAudio + 'a'.code).toChar()}"
@@ -144,22 +145,35 @@ fun PortraitGameScreen(
                 style = MaterialTheme.typography.headlineSmall
             )
             Box(
-                modifier = Modifier.weight(0.8f),
+                modifier = Modifier.weight(0.7f), // Box occupies 70% of the vertical space
                 contentAlignment = Alignment.Center
             ) {
                 Column(
-                    Modifier.fillMaxWidth(),
+
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    GenerateTiles(Modifier, gameState.eventValueVisual, gridSize)
+                    Box(
+                        modifier = Modifier
+                            .weight(0.9f)
+                            .aspectRatio(1f)
+                            .fillMaxWidth()
+
+                            //.padding(42.dp)
+                    ){
+                        GenerateTiles(Modifier, gameState.eventValueVisual, gridSize)
+                    }
+                    //Spacer(modifier = Modifier.padding(42.dp))
                     Button(
-                        modifier = Modifier.padding(horizontal = 42.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 42.dp)
+                            .weight(0.1f)
+                        ,
                         onClick = {
                         vm.startGame()
                     }) {
                         Text(
                             text = "Start",
-                            modifier = Modifier.weight(1f)
+                            //modifier = Modifier.weight(1f)
                             )
 
                     }
@@ -168,7 +182,8 @@ fun PortraitGameScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .weight(0.2f) // Row occupies 15% of the vertical space
+                    .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
