@@ -47,6 +47,7 @@ interface GameViewModel {
     val eventCounter:StateFlow<Int>
     val gridSize:StateFlow<Int>
     val nrOfSpokenLetters:StateFlow<Int>
+    val firstLetterForAudio:StateFlow<Boolean> //if true, is used to check if the first letter should be spoken in audio mode.
 
     fun setGameType(gameType: GameType) //Audio, visual, audio-visual
     fun startGame()
@@ -102,6 +103,10 @@ class GameVM(
     override val nrOfSpokenLetters: StateFlow<Int>
         get() = _nrOfSpokenLetters
 
+    private val _firstLetterForAudio = MutableStateFlow(false)
+    override val firstLetterForAudio: StateFlow<Boolean>
+        get() = _firstLetterForAudio
+
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var eventsVisual = emptyArray<Int>()  // Array with all events
     private var eventsAudio = emptyArray<Int>()  // Array with all events
@@ -127,6 +132,10 @@ class GameVM(
         eventCounterCheckerAudio=0
         resetScore()
         resetGameState()
+        _firstLetterForAudio.value=false
+
+        Log.d("firstLetterForAudio", "Before Game start: "+firstLetterForAudio.value.toString())
+
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
         eventsVisual = nBackHelper.generateNBackString(_nrOfEventsPerRound.value, gridSize.value*gridSize.value, 30, nBack.value).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
@@ -290,6 +299,7 @@ class GameVM(
 
         for (value in events) {
             _gameState.value = _gameState.value.copy(eventValueAudio = value)
+            _firstLetterForAudio.value=true
             delay(_eventInterval.value)
             _eventCounter.value++
 
@@ -330,6 +340,7 @@ class GameVM(
         for (i in eventsVisual.indices) { //eventsVisual och eventsAudio är lika stora, så man kan använda vilken som.
             _gameState.value = _gameState.value.copy(eventValueVisual = eventsVisual[i])
             _gameState.value = _gameState.value.copy(eventValueAudio = eventsAudio[i])
+            _firstLetterForAudio.value=true
             delay(_eventInterval.value)
             _eventCounter.value++
 

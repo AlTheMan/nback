@@ -371,7 +371,7 @@ fun PortraitHomeScreen(
                         .padding(horizontal = 2.dp),
                     onClick = {
                     vm.setGameType(GameType.AudioVisual);
-                }) {
+                    }) {
                     Row(
                         modifier = Modifier
                             .height(48.dp)

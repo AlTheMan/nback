@@ -2,6 +2,8 @@ package mobappdev.example.nback_cimpl.ui.screens
 
 import android.content.res.Configuration
 import android.speech.tts.TextToSpeech
+import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,6 +58,8 @@ import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
  *
  */
 
+
+
 fun speak(  textToSpeech: TextToSpeech, text: String) {
     // Use the TextToSpeech instance to speak the provided text
     textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
@@ -68,6 +72,7 @@ fun GameScreen(
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     Scaffold {
         if(isLandscape){
             LandScapeGameScreen(vm, navController,textToSpeech, Modifier.padding(it))
@@ -76,6 +81,7 @@ fun GameScreen(
             PortraitGameScreen(vm, navController,textToSpeech, Modifier.padding(it))
         }
     }
+
 }
 
 @Composable
@@ -88,6 +94,7 @@ fun PortraitGameScreen(
     val gameState by vm.gameState.collectAsState()
     val score by vm.score.collectAsState()
     val eventCounter by vm.eventCounter.collectAsState()
+    val firstLetterForAudio by vm.firstLetterForAudio.collectAsState()
     val gridSize by vm.gridSize.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     var isShakingVisual by remember { mutableStateOf(false) }
@@ -113,7 +120,7 @@ fun PortraitGameScreen(
     }
 
     // Observe the eventCounter using LaunchedEffect
-    LaunchedEffect(eventCounter) {
+    LaunchedEffect(eventCounter, firstLetterForAudio) {
         if(gameState.gameType.equals(GameType.Audio) || gameState.gameType.equals(GameType.AudioVisual)){
             if(gameState.eventValueAudio!=-1){
                 // This block will be executed whenever vm.eventCounter changes
@@ -237,6 +244,7 @@ fun LandScapeGameScreen(
     val score by vm.score.collectAsState()
     val eventCounter by vm.eventCounter.collectAsState()
     val gridSize by vm.gridSize.collectAsState()
+    val firstLetterForAudio by vm.firstLetterForAudio.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
     var isShakingVisual by remember { mutableStateOf(false) }
     var isShakingAudio by remember { mutableStateOf(false) }
@@ -262,7 +270,7 @@ fun LandScapeGameScreen(
     }
 
     // Observe the eventCounter using LaunchedEffect
-    LaunchedEffect(eventCounter) {
+    LaunchedEffect(eventCounter, firstLetterForAudio) {
         if(gameState.gameType.equals(GameType.Audio) || gameState.gameType.equals(GameType.AudioVisual)){
             if(gameState.eventValueAudio!=-1){
                 // This block will be executed whenever vm.eventCounter changes
