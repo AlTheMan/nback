@@ -1,4 +1,4 @@
-NBack game for Android. Written in Kotlin
+NBack game for Android. Features both Visual and audio mode. Written in Kotlin
 <br>
 <br>
 <br>
